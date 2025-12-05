@@ -23,11 +23,34 @@ class _WorkoutTabState extends State<WorkoutTab> {
     _selectedCategory = MockDataRepository.getAllWorkoutCategories().first;
   }
 
+  /// Get category icon
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Weight Lifting':
+        return Icons.fitness_center;
+      case 'Cardio':
+        return Icons.directions_run;
+      default:
+        return Icons.sports_gymnastics;
+    }
+  }
+
+  /// Get category color
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Weight Lifting':
+        return Colors.deepOrange;
+      case 'Cardio':
+        return Colors.blue;
+      default:
+        return const Color(0xFF4CAF50);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final workouts = MockDataRepository.getWorkoutsByCategory(
-      _selectedCategory,
-    );
+    final workouts =
+        MockDataRepository.getWorkoutsByCategory(_selectedCategory);
     final categories = MockDataRepository.getAllWorkoutCategories();
 
     return Column(
@@ -41,7 +64,14 @@ class _WorkoutTabState extends State<WorkoutTab> {
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: FilterChip(
+                  child: ChoiceChip(
+                    avatar: Icon(
+                      _getCategoryIcon(category),
+                      size: 18,
+                      color: isSelected
+                          ? Colors.white
+                          : _getCategoryColor(category),
+                    ),
                     label: Text(
                       category,
                       maxLines: 1,
@@ -52,10 +82,12 @@ class _WorkoutTabState extends State<WorkoutTab> {
                       setState(() => _selectedCategory = category);
                     },
                     backgroundColor: Colors.grey[200],
-                    selectedColor: const Color(0xFF4CAF50),
+                    selectedColor: _getCategoryColor(category),
                     labelStyle: TextStyle(
                       color: isSelected ? Colors.white : Colors.black,
                       fontSize: 12,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -63,26 +95,82 @@ class _WorkoutTabState extends State<WorkoutTab> {
             }).toList(),
           ),
         ),
-        // Workouts list
+
+        // Workouts list with empty state
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: workouts.length,
-            itemBuilder: (context, index) {
-              final workout = workouts[index];
-              return _buildWorkoutCard(context, workout);
-            },
-          ),
+          child: workouts.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: workouts.length,
+                  itemBuilder: (context, index) {
+                    // ✅ FIXED: Extract to separate widget
+                    return WorkoutCard(
+                      workout: workouts[index],
+                      categoryIcon: _getCategoryIcon(workouts[index].category),
+                      categoryColor:
+                          _getCategoryColor(workouts[index].category),
+                    );
+                  },
+                ),
         ),
       ],
     );
   }
 
-  /// Build workout card
-  Widget _buildWorkoutCard(BuildContext context, Workout workout) {
-    final isFavorite = context.watch<FavoritesProvider>().isWorkoutFavorite(
-          workout.id,
-        );
+  /// Build empty state
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            _getCategoryIcon(_selectedCategory),
+            size: 80,
+            color: Colors.grey[300],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'No workouts in $_selectedCategory',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try selecting a different category',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[400],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ✅ Separate widget for workout card (allows context.select to work properly)
+class WorkoutCard extends StatelessWidget {
+  final Workout workout;
+  final IconData categoryIcon;
+  final Color categoryColor;
+
+  const WorkoutCard({
+    super.key,
+    required this.workout,
+    required this.categoryIcon,
+    required this.categoryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // ✅ Now context.select works perfectly!
+    final isFavorite = context.select<FavoritesProvider, bool>(
+      (provider) => provider.isWorkoutFavorite(workout.id),
+    );
 
     return Card(
       key: ValueKey('workout_card_${workout.id}'),
@@ -90,23 +178,27 @@ class _WorkoutTabState extends State<WorkoutTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Workout image placeholder
+          // Workout image placeholder with gradient
           Container(
             width: double.infinity,
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+              gradient: LinearGradient(
+                colors: [
+                  categoryColor.withValues(alpha: 0.2),
+                  categoryColor.withValues(alpha: 0.05),
+                ],
               ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            child: const Icon(
-              Icons.fitness_center,
+            child: Icon(
+              categoryIcon,
               size: 48,
-              color: Colors.grey,
+              color: categoryColor.withValues(alpha: 0.5),
             ),
           ),
+
           // Workout details
           Padding(
             padding: const EdgeInsets.all(12),
@@ -134,28 +226,29 @@ class _WorkoutTabState extends State<WorkoutTab> {
                         color: isFavorite ? Colors.red : Colors.grey,
                       ),
                       onPressed: () {
-                        context.read<FavoritesProvider>().toggleWorkoutFavorite(
-                              workout.id,
-                            );
+                        context
+                            .read<FavoritesProvider>()
+                            .toggleWorkoutFavorite(workout.id);
                       },
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
+
                 // Details row
                 Row(
                   children: [
-                    Icon(Icons.timer, size: 14, color: const Color(0xFF4CAF50)),
+                    const Icon(Icons.timer, size: 14, color: Color(0xFF4CAF50)),
                     const SizedBox(width: 4),
                     Text(
                       '${workout.durationMinutes} min',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     const SizedBox(width: 16),
-                    Icon(
+                    const Icon(
                       Icons.local_fire_department,
                       size: 14,
-                      color: const Color(0xFF4CAF50),
+                      color: Color(0xFF4CAF50),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -165,6 +258,7 @@ class _WorkoutTabState extends State<WorkoutTab> {
                   ],
                 ),
                 const SizedBox(height: 8),
+
                 // Target muscles
                 if (workout.targetMuscles.isNotEmpty)
                   Wrap(
@@ -184,6 +278,7 @@ class _WorkoutTabState extends State<WorkoutTab> {
                         .toList(),
                   ),
                 const SizedBox(height: 12),
+
                 // Action buttons
                 Row(
                   children: [

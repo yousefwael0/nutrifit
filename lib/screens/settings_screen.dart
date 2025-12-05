@@ -63,9 +63,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
       }
     }
   }
@@ -92,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               }
             },
-            child: const Text('Logout'),
+            child: const Text('Logout', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -122,76 +122,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Email display
+          // Email display (keep as Card - it's info display, not input)
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 children: [
-                  const Text(
-                    'Email',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    user.email,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Icon(Icons.email, color: Color(0xFF4CAF50), size: 20),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Email',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        user.email,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
 
           // Health data editing
           const Text(
             'Health Data',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Age
-          _buildTextField(
+          // ✅ Age - uses global theme
+          TextField(
             controller: _ageController,
-            label: 'Age (years)',
             keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Age (years)',
+              prefixIcon: Icon(Icons.cake, color: Color(0xFF4CAF50)),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Weight
-          _buildTextField(
+          // ✅ Weight - uses global theme
+          TextField(
             controller: _weightController,
-            label: 'Current Weight (kg)',
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Current Weight (kg)',
+              prefixIcon: Icon(Icons.monitor_weight, color: Color(0xFF4CAF50)),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Height
-          _buildTextField(
+          // ✅ Height - uses global theme
+          TextField(
             controller: _heightController,
-            label: 'Height (cm)',
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Height (cm)',
+              prefixIcon: Icon(Icons.height, color: Color(0xFF4CAF50)),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
 
-          // Target weight
-          _buildTextField(
+          // ✅ Target weight - uses global theme
+          TextField(
             controller: _targetWeightController,
-            label: 'Target Weight (kg)',
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Target Weight (kg)',
+              prefixIcon: Icon(Icons.flag, color: Color(0xFF4CAF50)),
+            ),
           ),
           const SizedBox(height: 24),
 
           // Save button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               onPressed: _updateProfile,
-              child: const Text('Save Changes'),
+              icon: const Icon(Icons.save),
+              label: const Text('Save Changes'),
             ),
           ),
           const SizedBox(height: 32),
@@ -206,58 +225,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Logout button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               onPressed: _logout,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text(
-                'Logout',
-                style: TextStyle(color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
               ),
+              icon: const Icon(Icons.logout),
+              label: const Text('Logout'),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
 
           // Version info
-          Center(
+          const Center(
             child: Column(
               children: [
-                const Text(
+                Text(
                   'NutriFit',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   'v1.0.0',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 16),
         ],
-      ),
-    );
-  }
-
-  /// Build text field widget
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            labelText: label,
-            border: InputBorder.none,
-            labelStyle: const TextStyle(color: Color(0xFF4CAF50)),
-          ),
-        ),
       ),
     );
   }

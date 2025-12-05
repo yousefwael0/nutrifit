@@ -168,26 +168,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 60),
-                // Email input
-                Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter your email',
-                        border: InputBorder.none,
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
+
+                // ✅ Email input with white background (custom for login page)
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.black87),
                 ),
                 const SizedBox(height: 24),
+
                 // Login button
                 SizedBox(
                   width: double.infinity,
@@ -196,10 +207,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF4CAF50),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      elevation: 0,
                     ),
                     child: const Text(
                       'Next',
@@ -260,53 +272,72 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Email display (read-only)
-                _buildTextField(
+
+                // ✅ Email display (read-only) - uses global theme
+                TextField(
                   controller: _emailController,
-                  label: 'Email',
                   enabled: false,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(height: 16),
-                // Age
-                _buildTextField(
+
+                // ✅ Age - uses global theme
+                TextField(
                   controller: _ageController,
-                  label: 'Age (years)',
                   keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Age (years)',
+                  ),
                 ),
                 const SizedBox(height: 16),
-                // Weight
-                _buildTextField(
+
+                // ✅ Weight - uses global theme
+                TextField(
                   controller: _weightController,
-                  label: 'Current Weight (kg)',
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Current Weight (kg)',
+                  ),
                 ),
                 const SizedBox(height: 16),
-                // Height
-                _buildTextField(
+
+                // ✅ Height - uses global theme
+                TextField(
                   controller: _heightController,
-                  label: 'Height (cm)',
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Height (cm)',
+                  ),
                 ),
                 const SizedBox(height: 16),
-                // Sex selector (modern approach without deprecated Radio)
+
+                // Sex selector
                 const Text(
                   'Sex',
                   style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 SegmentedButton<String>(
                   segments: const [
                     ButtonSegment(
-                        value: 'M',
-                        label: Text('Male'),
-                        icon: Icon(Icons.male)),
+                      value: 'M',
+                      label: Text('Male'),
+                      icon: Icon(Icons.male),
+                    ),
                     ButtonSegment(
-                        value: 'F',
-                        label: Text('Female'),
-                        icon: Icon(Icons.female)),
+                      value: 'F',
+                      label: Text('Female'),
+                      icon: Icon(Icons.female),
+                    ),
                   ],
                   selected: {_selectedSex},
                   onSelectionChanged: (set) {
@@ -314,13 +345,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Target weight
-                _buildTextField(
+
+                // ✅ Target weight - uses global theme
+                TextField(
                   controller: _targetWeightController,
-                  label: 'Target Weight (kg)',
-                  keyboardType: TextInputType.number,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Target Weight (kg)',
+                  ),
                 ),
                 const SizedBox(height: 32),
+
                 // Signup button
                 SizedBox(
                   width: double.infinity,
@@ -329,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4CAF50),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: const Text(
                       'Create Account',
@@ -342,36 +378,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Build text field widget
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-    bool enabled = true,
-  }) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: TextField(
-          controller: controller,
-          enabled: enabled,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            labelText: label,
-            border: InputBorder.none,
-            labelStyle: TextStyle(
-              color: enabled ? const Color(0xFF4CAF50) : Colors.grey,
             ),
           ),
         ),

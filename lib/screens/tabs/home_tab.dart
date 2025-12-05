@@ -12,49 +12,34 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserProvider>().user;
+    // ✅ Performance: Only watch user, not entire provider
+    final user = context.select<UserProvider, User?>(
+      (provider) => provider.user,
+    );
+
     if (user == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Watch providers for live updates
-    final favoritesProvider = context.watch<FavoritesProvider>();
-
-    // Get recent items from storage (these don't need live updates)
-    final recentMealIds = MockDataRepository.getAllMeals()
-        .where((meal) => favoritesProvider.favoriteMeals.contains(meal.id))
-        .take(3)
-        .map((m) => m.id)
-        .toList();
-    final recentWorkoutIds = MockDataRepository.getAllWorkouts()
-        .where((workout) =>
-            favoritesProvider.favoriteWorkouts.contains(workout.id))
-        .take(3)
-        .map((w) => w.id)
-        .toList();
-
-    final recentMeals = recentMealIds
-        .map((id) => MockDataRepository.getMealById(id))
-        .whereType<Meal>()
-        .toList();
-    final recentWorkouts = recentWorkoutIds
-        .map((id) => MockDataRepository.getWorkoutById(id))
-        .whereType<Workout>()
-        .toList();
-
-    // Get favorites from provider (live updates!)
-    final favoriteMealIds = favoritesProvider.favoriteMeals.take(3).toList();
-    final favoriteWorkoutIds =
-        favoritesProvider.favoriteWorkouts.take(3).toList();
+    // ✅ Performance: Select only what we need from favorites
+    final favoriteMealIds = context.select<FavoritesProvider, List<String>>(
+      (provider) => provider.favoriteMeals.take(3).toList(),
+    );
+    final favoriteWorkoutIds = context.select<FavoritesProvider, List<String>>(
+      (provider) => provider.favoriteWorkouts.take(3).toList(),
+    );
 
     final favoriteMeals = favoriteMealIds
         .map((id) => MockDataRepository.getMealById(id))
         .whereType<Meal>()
         .toList();
+
     final favoriteWorkouts = favoriteWorkoutIds
         .map((id) => MockDataRepository.getWorkoutById(id))
         .whereType<Workout>()
         .toList();
+
+    final hasNoActivity = favoriteMeals.isEmpty && favoriteWorkouts.isEmpty;
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -67,24 +52,6 @@ class HomeTab extends StatelessWidget {
         _buildInsightsSection(user),
         const SizedBox(height: 24),
 
-        // Recent meals
-        if (recentMeals.isNotEmpty) ...[
-          _buildSectionHeader('Recent Meals'),
-          const SizedBox(height: 12),
-          ...recentMeals.map((meal) => _buildMealCard(context, meal)),
-          const SizedBox(height: 24),
-        ],
-
-        // Recent workouts
-        if (recentWorkouts.isNotEmpty) ...[
-          _buildSectionHeader('Recent Workouts'),
-          const SizedBox(height: 12),
-          ...recentWorkouts.map(
-            (workout) => _buildWorkoutCard(context, workout),
-          ),
-          const SizedBox(height: 24),
-        ],
-
         // Favorite meals
         if (favoriteMeals.isNotEmpty) ...[
           _buildSectionHeader('Favorite Meals'),
@@ -93,7 +60,7 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 24),
         ],
 
-        // Favorite workouts (NEW!)
+        // Favorite workouts
         if (favoriteWorkouts.isNotEmpty) ...[
           _buildSectionHeader('Favorite Workouts'),
           const SizedBox(height: 12),
@@ -102,25 +69,27 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 24),
         ],
 
-        // Empty state message
-        if (recentMeals.isEmpty &&
-            recentWorkouts.isEmpty &&
-            favoriteMeals.isEmpty &&
-            favoriteWorkouts.isEmpty)
-          Center(
+        // ✨ Enhanced empty state
+        if (hasNoActivity)
+          Container(
+            padding: const EdgeInsets.all(32),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.trending_up, size: 64, color: Colors.grey[300]),
+                Icon(Icons.favorite_border, size: 64, color: Colors.grey[300]),
                 const SizedBox(height: 16),
                 const Text(
-                  'No activity yet!',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  'No favorites yet!',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Start by adding meals and workouts',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                Text(
+                  'Start by adding meals and workouts to favorites',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

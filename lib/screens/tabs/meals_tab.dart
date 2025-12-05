@@ -6,7 +6,7 @@ import 'package:nutrifit/repositories/mock_data_repository.dart';
 import 'package:nutrifit/services/ml_service.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/meal_detail_screen.dart';
-import 'package:flutter/services.dart'; // add this
+import 'package:flutter/services.dart';
 
 /// Meals tab showing all meals with category filtering
 class MealsTab extends StatefulWidget {
@@ -26,6 +26,38 @@ class _MealsTabState extends State<MealsTab> {
     _selectedCategory = MockDataRepository.getAllMealCategories().first;
   }
 
+  /// Get custom icon for meal category
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Breakfast':
+        return Icons.free_breakfast;
+      case 'Lunch':
+        return Icons.lunch_dining;
+      case 'Dinner':
+        return Icons.dinner_dining;
+      case 'Snacks':
+        return Icons.restaurant;
+      default:
+        return Icons.fastfood;
+    }
+  }
+
+  /// Get category color
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Breakfast':
+        return Colors.orange;
+      case 'Lunch':
+        return Colors.blue;
+      case 'Dinner':
+        return Colors.purple;
+      case 'Snacks':
+        return Colors.teal;
+      default:
+        return const Color(0xFF4CAF50);
+    }
+  }
+
   /// Open camera for food detection
   Future<void> _openCamera() async {
     try {
@@ -35,7 +67,7 @@ class _MealsTabState extends State<MealsTab> {
       );
       if (image == null || !mounted) return;
 
-      // Loading dialog
+      if (!mounted) return;
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -44,26 +76,28 @@ class _MealsTabState extends State<MealsTab> {
 
       final detections = await MLService.detectFoodFromImage(image.path);
       if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop(); // close loading
+      Navigator.of(context, rootNavigator: true).pop();
       _showFoodDetectionResults(detections);
     } on PlatformException catch (e) {
-      // iOS simulator or no camera available
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text('Camera unavailable (${e.code}). Opening gallery...')),
+          content: Text('Camera unavailable (${e.code}). Opening gallery...'),
+        ),
       );
+
       final image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 85,
       );
       if (image == null || !mounted) return;
+
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) => const Center(child: CircularProgressIndicator()),
       );
+
       final detections = await MLService.detectFoodFromImage(image.path);
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
@@ -88,13 +122,12 @@ class _MealsTabState extends State<MealsTab> {
             shrinkWrap: true,
             children: detections.map((detection) {
               return ListTile(
-                leading: const Icon(Icons.restaurant),
+                leading: const Icon(Icons.restaurant, color: Color(0xFF4CAF50)),
                 title: Text(detection['name']),
                 subtitle: Text('${detection['calories']} cal'),
-                trailing: const Icon(Icons.add),
+                trailing: const Icon(Icons.add, color: Color(0xFF4CAF50)),
                 onTap: () {
                   Navigator.pop(context);
-                  // Optionally add to favorites or log
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('${detection['name']} detected!')),
                   );
@@ -121,7 +154,7 @@ class _MealsTabState extends State<MealsTab> {
     return Scaffold(
       body: Column(
         children: [
-          // Category selector
+          // Enhanced category selector with custom icons
           Container(
             padding: const EdgeInsets.all(16),
             child: SingleChildScrollView(
@@ -131,16 +164,25 @@ class _MealsTabState extends State<MealsTab> {
                   final isSelected = category == _selectedCategory;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
+                    child: ChoiceChip(
+                      avatar: Icon(
+                        _getCategoryIcon(category),
+                        size: 18,
+                        color: isSelected
+                            ? Colors.white
+                            : _getCategoryColor(category),
+                      ),
                       label: Text(category),
                       selected: isSelected,
                       onSelected: (selected) {
                         setState(() => _selectedCategory = category);
                       },
                       backgroundColor: Colors.grey[200],
-                      selectedColor: const Color(0xFF4CAF50),
+                      selectedColor: _getCategoryColor(category),
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.white : Colors.black,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                   );
@@ -148,33 +190,88 @@ class _MealsTabState extends State<MealsTab> {
               ),
             ),
           ),
-          // Meals list
+
+          // Meals list with empty state
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: meals.length,
-              itemBuilder: (context, index) {
-                final meal = meals[index];
-                return _buildMealCard(context, meal);
-              },
-            ),
+            child: meals.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: meals.length,
+                    itemBuilder: (context, index) {
+                      // ✅ FIXED: Extract to separate widget
+                      return MealCard(
+                        meal: meals[index],
+                        categoryIcon: _getCategoryIcon(meals[index].category),
+                        categoryColor: _getCategoryColor(meals[index].category),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         heroTag: 'meals_camera_fab',
         onPressed: _openCamera,
-        tooltip: 'Scan Food',
-        child: const Icon(Icons.camera_alt),
+        icon: const Icon(Icons.camera_alt),
+        label: const Text('Scan Food'),
       ),
     );
   }
 
-  /// Build meal card
-  Widget _buildMealCard(BuildContext context, Meal meal) {
-    final isFavorite = context.watch<FavoritesProvider>().isMealFavorite(
-          meal.id,
-        );
+  /// Build empty state with illustration
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.restaurant_menu,
+            size: 80,
+            color: Colors.grey[300],
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'No meals in $_selectedCategory',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try selecting a different category',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[400],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ✅ Separate widget for meal card (allows context.select to work properly)
+class MealCard extends StatelessWidget {
+  final Meal meal;
+  final IconData categoryIcon;
+  final Color categoryColor;
+
+  const MealCard({
+    super.key,
+    required this.meal,
+    required this.categoryIcon,
+    required this.categoryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // ✅ Now context.select works perfectly!
+    final isFavorite = context.select<FavoritesProvider, bool>(
+      (provider) => provider.isMealFavorite(meal.id),
+    );
 
     return Card(
       key: ValueKey('meal_card_${meal.id}'),
@@ -187,16 +284,31 @@ class _MealsTabState extends State<MealsTab> {
             ),
           );
         },
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Meal image placeholder
+            // Meal image placeholder with category icon
             Container(
               width: double.infinity,
               height: 150,
-              decoration: BoxDecoration(color: Colors.grey[200]),
-              child: const Icon(Icons.image, size: 64, color: Colors.grey),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    categoryColor.withValues(alpha: 0.2),
+                    categoryColor.withValues(alpha: 0.05),
+                  ],
+                ),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Icon(
+                categoryIcon,
+                size: 64,
+                color: categoryColor.withValues(alpha: 0.5),
+              ),
             ),
+
             // Meal details
             Padding(
               padding: const EdgeInsets.all(12),
@@ -223,14 +335,15 @@ class _MealsTabState extends State<MealsTab> {
                           color: isFavorite ? Colors.red : Colors.grey,
                         ),
                         onPressed: () {
-                          context.read<FavoritesProvider>().toggleMealFavorite(
-                                meal.id,
-                              );
+                          context
+                              .read<FavoritesProvider>()
+                              .toggleMealFavorite(meal.id);
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
+
                   // Macros
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -265,7 +378,6 @@ class _MealsTabState extends State<MealsTab> {
     );
   }
 
-  /// Build macro tag
   Widget _buildMacroTag(String label, IconData icon) {
     return Row(
       children: [
