@@ -224,3 +224,92 @@ class MalnutritionResult {
         confidence: (json['confidence'] as num).toDouble(),
       );
 }
+
+/// Weight entry for tracking progress
+class WeightEntry {
+  final DateTime date;
+  final double weight; // kg
+  final String? note;
+
+  WeightEntry({
+    required this.date,
+    required this.weight,
+    this.note,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'date': date.toIso8601String(),
+        'weight': weight,
+        'note': note,
+      };
+
+  factory WeightEntry.fromJson(Map<String, dynamic> json) => WeightEntry(
+        date: DateTime.parse(json['date'] as String),
+        weight: (json['weight'] as num).toDouble(),
+        note: json['note'] as String?,
+      );
+}
+
+/// Activity entry for calendar heatmap
+class ActivityEntry {
+  final DateTime date;
+  final int workoutsCompleted;
+  final int mealsLogged;
+  final double caloriesBurned;
+
+  ActivityEntry({
+    required this.date,
+    required this.workoutsCompleted,
+    required this.mealsLogged,
+    required this.caloriesBurned,
+  });
+
+  int get activityScore => workoutsCompleted + mealsLogged;
+
+  Map<String, dynamic> toJson() => {
+        'date': date.toIso8601String(),
+        'workoutsCompleted': workoutsCompleted,
+        'mealsLogged': mealsLogged,
+        'caloriesBurned': caloriesBurned,
+      };
+
+  factory ActivityEntry.fromJson(Map<String, dynamic> json) => ActivityEntry(
+        date: DateTime.parse(json['date'] as String),
+        workoutsCompleted: json['workoutsCompleted'] as int,
+        mealsLogged: json['mealsLogged'] as int,
+        caloriesBurned: (json['caloriesBurned'] as num).toDouble(),
+      );
+}
+
+/// Daily nutrition summary
+class DailyNutrition {
+  final DateTime date;
+  final double calories;
+  final double protein;
+  final double carbs;
+  final double fats;
+
+  DailyNutrition({
+    required this.date,
+    required this.calories,
+    required this.protein,
+    required this.carbs,
+    required this.fats,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'date': date.toIso8601String(),
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fats': fats,
+      };
+
+  factory DailyNutrition.fromJson(Map<String, dynamic> json) => DailyNutrition(
+        date: DateTime.parse(json['date'] as String),
+        calories: (json['calories'] as num).toDouble(),
+        protein: (json['protein'] as num).toDouble(),
+        carbs: (json['carbs'] as num).toDouble(),
+        fats: (json['fats'] as num).toDouble(),
+      );
+}

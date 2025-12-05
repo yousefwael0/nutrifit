@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   
+  fl_chart: ^0.68.0
+  
   flutter_cache_manager: ^3.3.1
 
   # UI and Navigation

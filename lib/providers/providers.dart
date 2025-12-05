@@ -115,3 +115,159 @@ class RecentsProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+/// Provider for managing progress tracking with demo data
+class ProgressProvider extends ChangeNotifier {
+  final List<WeightEntry> _weightHistory = [];
+  final List<ActivityEntry> _activityHistory = [];
+  final List<DailyNutrition> _nutritionHistory = [];
+
+  List<WeightEntry> get weightHistory => _weightHistory;
+  List<ActivityEntry> get activityHistory => _activityHistory;
+  List<DailyNutrition> get nutritionHistory => _nutritionHistory;
+
+  /// Initialize with demo data for presentation
+  void initializeDemoData() {
+    _generateDemoWeightData();
+    _generateDemoActivityData();
+    _generateDemoNutritionData();
+    notifyListeners();
+  }
+
+  /// Generate 30 days of realistic weight tracking
+  void _generateDemoWeightData() {
+    _weightHistory.clear();
+    final startDate = DateTime.now().subtract(const Duration(days: 30));
+    double currentWeight = 82.5; // Starting weight
+
+    for (int i = 0; i <= 30; i++) {
+      final date = startDate.add(Duration(days: i));
+
+      // Realistic weight loss: -0.5 to -0.8 kg per week with fluctuations
+      if (i % 7 == 0 && i > 0) {
+        currentWeight -= 0.6; // Weekly average loss
+      }
+
+      // Daily fluctuations (-0.3 to +0.2 kg)
+      final dailyVariation = (i % 3 == 0) ? -0.2 : ((i % 2 == 0) ? 0.1 : -0.1);
+      final weight = currentWeight + dailyVariation;
+
+      _weightHistory.add(WeightEntry(
+        date: date,
+        weight: double.parse(weight.toStringAsFixed(1)),
+        note: i == 0
+            ? 'Starting weight'
+            : (i % 7 == 0 ? 'Weekly check-in' : null),
+      ));
+    }
+  }
+
+  /// Generate 30 days of activity data
+  void _generateDemoActivityData() {
+    _activityHistory.clear();
+    final startDate = DateTime.now().subtract(const Duration(days: 30));
+
+    for (int i = 0; i <= 30; i++) {
+      final date = startDate.add(Duration(days: i));
+
+      // Most active on weekdays, less on weekends
+      final isWeekend =
+          date.weekday == DateTime.saturday || date.weekday == DateTime.sunday;
+
+      final workouts = isWeekend ? (i % 3 == 0 ? 1 : 0) : (i % 2 == 0 ? 2 : 1);
+      final meals = isWeekend ? 2 : 3;
+      final calories = workouts * 250.0 + (i % 4 == 0 ? 100 : 0);
+
+      _activityHistory.add(ActivityEntry(
+        date: date,
+        workoutsCompleted: workouts,
+        mealsLogged: meals,
+        caloriesBurned: calories,
+      ));
+    }
+  }
+
+  /// Generate 7 days of nutrition data
+  void _generateDemoNutritionData() {
+    _nutritionHistory.clear();
+    final startDate = DateTime.now().subtract(const Duration(days: 7));
+
+    for (int i = 0; i <= 7; i++) {
+      final date = startDate.add(Duration(days: i));
+
+      // Realistic daily macros
+      final calories = 1800 + (i % 3) * 100 - (i % 2) * 50;
+      final protein = 120 + (i % 4) * 10;
+      final carbs = 180 + (i % 3) * 20;
+      final fats = 60 + (i % 2) * 5;
+
+      _nutritionHistory.add(DailyNutrition(
+        date: date,
+        calories: calories.toDouble(),
+        protein: protein.toDouble(),
+        carbs: carbs.toDouble(),
+        fats: fats.toDouble(),
+      ));
+    }
+  }
+
+  /// Get current weight
+  double? get currentWeight =>
+      _weightHistory.isNotEmpty ? _weightHistory.last.weight : null;
+
+  /// Get starting weight
+  double? get startingWeight =>
+      _weightHistory.isNotEmpty ? _weightHistory.first.weight : null;
+
+  /// Get total weight lost
+  double get weightLost {
+    if (_weightHistory.length < 2) return 0;
+    return startingWeight! - currentWeight!;
+  }
+
+  /// Get this week's activity count
+  int get thisWeekWorkouts {
+    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+    return _activityHistory
+        .where((entry) => entry.date.isAfter(weekAgo))
+        .fold(0, (sum, entry) => sum + entry.workoutsCompleted);
+  }
+
+  /// Get this week's calories burned
+  double get thisWeekCalories {
+    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+    return _activityHistory
+        .where((entry) => entry.date.isAfter(weekAgo))
+        .fold(0.0, (sum, entry) => sum + entry.caloriesBurned);
+  }
+
+  /// Get current streak (consecutive days with activity)
+  int get currentStreak {
+    if (_activityHistory.isEmpty) return 0;
+
+    int streak = 0;
+    final now = DateTime.now();
+
+    for (int i = 0; i < 30; i++) {
+      final checkDate = now.subtract(Duration(days: i));
+      final activity = _activityHistory.firstWhere(
+        (entry) =>
+            entry.date.day == checkDate.day &&
+            entry.date.month == checkDate.month,
+        orElse: () => ActivityEntry(
+            date: checkDate,
+            workoutsCompleted: 0,
+            mealsLogged: 0,
+            caloriesBurned: 0),
+      );
+
+      if (activity.activityScore > 0) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+}

@@ -4,6 +4,7 @@ import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/tabs/home_tab.dart';
 import 'package:nutrifit/screens/tabs/meals_tab.dart';
 import 'package:nutrifit/screens/tabs/workout_tab.dart';
+import 'package:nutrifit/screens/tabs/progress_tab.dart'; // ✅ New import
 import 'package:nutrifit/screens/tabs/malnutrition_tab.dart';
 import 'package:nutrifit/screens/settings_screen.dart';
 
@@ -21,24 +22,29 @@ class _HomeScreenState extends State<HomeScreen>
   late AnimationController _animationController;
   late Animation<double> _animation;
 
-  // Screens for each tab
+  // ✅ Updated screens - added ProgressTab
   late final List<Widget> _screens = const [
     HomeTab(),
     MealsTab(),
     WorkoutTab(),
+    ProgressTab(), // ✅ New tab
     MalnutritionTab(),
   ];
 
+  // ✅ Updated titles and icons
   final List<String> _tabTitles = [
     'Home',
     'Meals',
     'Workouts',
+    'Progress', // ✅ New
     'Body Analysis'
   ];
+
   final List<IconData> _tabIcons = [
     Icons.home,
     Icons.restaurant,
     Icons.fitness_center,
+    Icons.show_chart, // ✅ New icon
     Icons.accessibility,
   ];
 
@@ -60,6 +66,9 @@ class _HomeScreenState extends State<HomeScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().loadUser();
       context.read<FavoritesProvider>().initialize();
+      context
+          .read<ProgressProvider>()
+          .initializeDemoData(); // ✅ Initialize progress data
     });
   }
 
@@ -91,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen>
             padding: const EdgeInsets.all(12.0),
             child: GestureDetector(
               onTap: () {
-                // ✅ Custom slide transition
                 Navigator.of(context).push(
                   _createRoute(const SettingsScreen()),
                 );
@@ -141,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  /// ✅ Custom slide-up route transition
+  /// Custom slide-up route transition
   Route _createRoute(Widget destination) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => destination,
