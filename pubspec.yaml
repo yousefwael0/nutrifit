@@ -10,33 +10,35 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  flutter_cache_manager: ^3.3.1
 
   # UI and Navigation
   cupertino_icons: ^1.0.8
-  
+
   # State Management
   provider: ^6.1.2
-  
+
   # Local Storage
   shared_preferences: ^2.3.2
-  
+
   # Camera and Image Picking
   image_picker: ^1.2.1
   camera: ^0.11.3
-  
+
   # Internationalization & Formatting
   intl: ^0.19.0
-  
+
   # Image Caching
   cached_network_image: ^3.4.1
-  
+
   # Additional Utilities
   uuid: ^4.5.1
   path: ^1.9.0
-  
-  # Typography - Google Fonts (NO asset downloads needed!)
+
+  # Typography - Google Fonts
   google_fonts: ^6.2.1
-  
+
   # Animations
   flutter_animate: ^4.5.0
 
@@ -44,12 +46,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  
-  # App Icon Generator
   flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
+  
+  # ✅ Asset Configuration
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/illustrations/
 
 # App Icon Configuration
 flutter_launcher_icons:

@@ -7,6 +7,7 @@ import 'package:nutrifit/services/ml_service.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/meal_detail_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:nutrifit/widgets/cached_meal_image.dart';
 
 /// Meals tab showing all meals with category filtering
 class MealsTab extends StatefulWidget {
@@ -253,7 +254,7 @@ class _MealsTabState extends State<MealsTab> {
   }
 }
 
-/// ✅ Separate widget for meal card (allows context.select to work properly)
+/// ✅ Separate widget for meal card with cached images
 class MealCard extends StatelessWidget {
   final Meal meal;
   final IconData categoryIcon;
@@ -268,7 +269,6 @@ class MealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Now context.select works perfectly!
     final isFavorite = context.select<FavoritesProvider, bool>(
       (provider) => provider.isMealFavorite(meal.id),
     );
@@ -288,25 +288,14 @@ class MealCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Meal image placeholder with category icon
-            Container(
-              width: double.infinity,
+            // ✅ Cached network image with fallback
+            CachedMealImage(
+              imageUrl: meal.imageUrl,
               height: 150,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    categoryColor.withValues(alpha: 0.2),
-                    categoryColor.withValues(alpha: 0.05),
-                  ],
-                ),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              child: Icon(
-                categoryIcon,
-                size: 64,
-                color: categoryColor.withValues(alpha: 0.5),
-              ),
+              fallbackIcon: categoryIcon,
+              fallbackColor: categoryColor,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
             ),
 
             // Meal details

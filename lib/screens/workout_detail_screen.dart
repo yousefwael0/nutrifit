@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:nutrifit/models/models.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/services/storage_service.dart';
+import 'package:nutrifit/widgets/cached_meal_image.dart';
 
 /// Workout detail screen
 class WorkoutDetailScreen extends StatefulWidget {
@@ -18,16 +19,33 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Add to recents
     StorageService.addRecentWorkout(widget.workout.id);
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Weight Lifting':
+        return Colors.deepOrange;
+      case 'Cardio':
+        return Colors.blue;
+      default:
+        return const Color(0xFF4CAF50);
+    }
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Weight Lifting':
+        return Icons.fitness_center;
+      case 'Cardio':
+        return Icons.directions_run;
+      default:
+        return Icons.sports_gymnastics;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //final isFavorite = context.watch<FavoritesProvider>().isWorkoutFavorite(
-    //    widget.workout.id,
-    //);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Workout Details'),
@@ -55,15 +73,14 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
       ),
       body: ListView(
         children: [
-          // Workout image placeholder
-          Container(
-            width: double.infinity,
-            height: 250,
-            color: Colors.grey[200],
-            child: const Icon(
-              Icons.fitness_center,
-              size: 80,
-              color: Colors.grey,
+          // ✅ Hero cached image
+          Hero(
+            tag: 'workout_${widget.workout.id}',
+            child: CachedMealImage(
+              imageUrl: widget.workout.imageUrl,
+              height: 250,
+              fallbackIcon: _getCategoryIcon(widget.workout.category),
+              fallbackColor: _getCategoryColor(widget.workout.category),
             ),
           ),
           Padding(
@@ -80,10 +97,11 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 // Category
                 Chip(
                   label: Text(widget.workout.category),
-                  backgroundColor: const Color(0xFF4CAF50),
+                  backgroundColor: _getCategoryColor(widget.workout.category),
                   labelStyle: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 16),
@@ -144,7 +162,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50),
+                            color: _getCategoryColor(widget.workout.category),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -207,7 +225,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: const Color(0xFF4CAF50), size: 24),
+          Icon(icon,
+              color: _getCategoryColor(widget.workout.category), size: 24),
           const SizedBox(height: 4),
           Text(
             value,

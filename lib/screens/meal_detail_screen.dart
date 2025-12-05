@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:nutrifit/models/models.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/services/storage_service.dart';
+import 'package:nutrifit/widgets/cached_meal_image.dart';
 
 /// Meal detail screen
 class MealDetailScreen extends StatefulWidget {
@@ -18,21 +19,30 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Add to recents
     StorageService.addRecentMeal(widget.meal.id);
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Breakfast':
+        return Colors.orange;
+      case 'Lunch':
+        return Colors.blue;
+      case 'Dinner':
+        return Colors.purple;
+      case 'Snacks':
+        return Colors.teal;
+      default:
+        return const Color(0xFF4CAF50);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //final isFavorite = context.watch<FavoritesProvider>().isMealFavorite(
-    //    widget.meal.id,
-    //);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meal Details'),
         actions: [
-          // Wrap IconButton to disable Hero animation
           Builder(
             builder: (context) {
               final isFavorite =
@@ -56,12 +66,15 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       ),
       body: ListView(
         children: [
-          // Meal image placeholder
-          Container(
-            width: double.infinity,
-            height: 250,
-            color: Colors.grey[200],
-            child: const Icon(Icons.restaurant, size: 80, color: Colors.grey),
+          // ✅ Hero cached image
+          Hero(
+            tag: 'meal_${widget.meal.id}',
+            child: CachedMealImage(
+              imageUrl: widget.meal.imageUrl,
+              height: 250,
+              fallbackIcon: Icons.restaurant,
+              fallbackColor: _getCategoryColor(widget.meal.category),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -77,10 +90,11 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 // Category
                 Chip(
                   label: Text(widget.meal.category),
-                  backgroundColor: const Color(0xFF4CAF50),
+                  backgroundColor: _getCategoryColor(widget.meal.category),
                   labelStyle: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 16),
@@ -139,10 +153,10 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.check_circle,
                           size: 16,
-                          color: Color(0xFF4CAF50),
+                          color: _getCategoryColor(widget.meal.category),
                         ),
                         const SizedBox(width: 8),
                         Text(ingredient),
@@ -171,7 +185,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: const Color(0xFF4CAF50), size: 24),
+          Icon(icon, color: _getCategoryColor(widget.meal.category), size: 24),
           const SizedBox(height: 4),
           Text(
             value,

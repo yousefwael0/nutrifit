@@ -15,19 +15,26 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   // Screens for each tab
-  late final List<Widget> _screens = [
-    const HomeTab(),
-    const MealsTab(),
-    const WorkoutTab(),
-    const MalnutritionTab(),
+  late final List<Widget> _screens = const [
+    HomeTab(),
+    MealsTab(),
+    WorkoutTab(),
+    MalnutritionTab(),
   ];
 
-  final List<String> _tabTitles = ['Home', 'Meals', 'Workouts', 'Malnutrition'];
-
+  final List<String> _tabTitles = [
+    'Home',
+    'Meals',
+    'Workouts',
+    'Body Analysis'
+  ];
   final List<IconData> _tabIcons = [
     Icons.home,
     Icons.restaurant,
@@ -38,11 +45,37 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Smooth fade animation for tab switches
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+    _animationController.forward();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Load user for HomeTab (fresh launch from Splash)
       context.read<UserProvider>().loadUser();
-      // Initialize favorites without notifying during build
       context.read<FavoritesProvider>().initialize();
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged(int index) {
+    if (_selectedIndex == index) return;
+
+    setState(() {
+      _selectedIndex = index;
+      _animationController.reset();
+      _animationController.forward();
     });
   }
 
@@ -53,36 +86,49 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(_tabTitles[_selectedIndex]),
         elevation: 0,
         actions: [
-          // Profile icon button
+          // Profile icon button with smooth navigation
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: GestureDetector(
               onTap: () {
+                // ✅ Custom slide transition
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsScreen(),
-                  ),
+                  _createRoute(const SettingsScreen()),
                 );
               },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+              child: Hero(
+                tag: 'profile_icon',
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.person, color: Color(0xFF4CAF50)),
                 ),
-                child: const Icon(Icons.person, color: Color(0xFF4CAF50)),
               ),
             ),
           ),
         ],
       ),
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: FadeTransition(
+        opacity: _animation,
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _screens,
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() => _selectedIndex = index);
-        },
+        onTap: _onTabChanged,
         type: BottomNavigationBarType.fixed,
         items: List.generate(
           _tabTitles.length,
@@ -92,6 +138,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  /// ✅ Custom slide-up route transition
+  Route _createRoute(Widget destination) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => destination,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOutCubic;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 300),
     );
   }
 }

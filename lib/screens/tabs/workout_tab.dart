@@ -5,6 +5,7 @@ import 'package:nutrifit/repositories/mock_data_repository.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/workout_timer_screen.dart';
 import 'package:nutrifit/screens/workout_detail_screen.dart';
+import 'package:nutrifit/widgets/cached_meal_image.dart';
 
 /// Workout tab showing weight lifting and cardio workouts
 class WorkoutTab extends StatefulWidget {
@@ -152,7 +153,7 @@ class _WorkoutTabState extends State<WorkoutTab> {
   }
 }
 
-/// ✅ Separate widget for workout card (allows context.select to work properly)
+/// ✅ Separate widget for workout card with cached images
 class WorkoutCard extends StatelessWidget {
   final Workout workout;
   final IconData categoryIcon;
@@ -167,7 +168,6 @@ class WorkoutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Now context.select works perfectly!
     final isFavorite = context.select<FavoritesProvider, bool>(
       (provider) => provider.isWorkoutFavorite(workout.id),
     );
@@ -178,25 +178,13 @@ class WorkoutCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Workout image placeholder with gradient
-          Container(
-            width: double.infinity,
+          // ✅ Cached network image with fallback
+          CachedMealImage(
+            imageUrl: workout.imageUrl,
             height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  categoryColor.withValues(alpha: 0.2),
-                  categoryColor.withValues(alpha: 0.05),
-                ],
-              ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Icon(
-              categoryIcon,
-              size: 48,
-              color: categoryColor.withValues(alpha: 0.5),
-            ),
+            fallbackIcon: categoryIcon,
+            fallbackColor: categoryColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
 
           // Workout details

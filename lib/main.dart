@@ -1,15 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutrifit/screens/splash_screen.dart';
 import 'package:nutrifit/screens/home_screen.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/services/storage_service.dart';
+//import 'package:cached_network_image/cached_network_image.dart'; // ✅ Add this
+//import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Clear image cache (remove this line after first run)
+  //await CachedNetworkImage.evictFromCache('');
+  //await DefaultCacheManager().emptyCache();
+
+  // Set system UI overlay style (status bar)
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  // Pre-cache Google Fonts (eliminates first-load lag)
+  await _precacheFonts();
+
   await StorageService.initialize();
   runApp(const NutriFitApp());
+}
+
+/// Pre-cache Google Fonts to avoid download lag
+Future<void> _precacheFonts() async {
+  try {
+    await Future.wait([
+      GoogleFonts.poppins().fontFamily,
+      GoogleFonts.inter().fontFamily,
+    ].map((e) => Future.value(e)));
+  } catch (e) {
+    debugPrint('Font pre-caching failed: $e');
+  }
 }
 
 class NutriFitApp extends StatelessWidget {
@@ -31,6 +62,14 @@ class NutriFitApp extends StatelessWidget {
             brightness: Brightness.light,
           ),
           scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+
+          // ✅ Optimized page transitions (smoother animations)
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: {
+              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            },
+          ),
 
           // Professional Typography with Google Fonts
           textTheme: GoogleFonts.interTextTheme(
@@ -66,6 +105,7 @@ class NutriFitApp extends StatelessWidget {
             foregroundColor: Colors.white,
             centerTitle: true,
             elevation: 0,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
             titleTextStyle: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -119,7 +159,6 @@ class NutriFitApp extends StatelessWidget {
             ),
           ),
 
-          // ✅ FIXED: Clean border style (no fill)
           inputDecorationTheme: InputDecorationTheme(
             filled: false,
             border: OutlineInputBorder(
