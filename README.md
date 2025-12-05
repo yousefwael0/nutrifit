@@ -93,10 +93,11 @@ nutrifit/
 - **Android Studio** or Android SDK (for Android)
 
 ### Verify Installation
+```bash
 flutter doctor -v
 
 All checks should pass ✓
-
+```
 ---
 
 ## 🚀 Quick Start
