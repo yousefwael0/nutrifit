@@ -271,3 +271,26 @@ class ProgressProvider extends ChangeNotifier {
     return streak;
   }
 }
+
+/// Provider for managing theme (dark mode)
+class ThemeProvider extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  ThemeMode get themeMode => _themeMode;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+
+  /// Initialize theme from storage
+  Future<void> initialize() async {
+    final isDark = StorageService.getDarkMode();
+    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+
+  /// Toggle dark mode
+  Future<void> toggleTheme() async {
+    _themeMode =
+        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    await StorageService.setDarkMode(_themeMode == ThemeMode.dark);
+    notifyListeners();
+  }
+}

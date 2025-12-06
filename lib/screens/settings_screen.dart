@@ -229,6 +229,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
 
+              // Dark mode toggle
+              Consumer<ThemeProvider>(
+                builder: (context, themeProvider, child) {
+                  return Card(
+                    child: SwitchListTile(
+                      title: const Text(
+                        'Dark Mode',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        themeProvider.isDarkMode ? 'Enabled' : 'Disabled',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      secondary: Icon(
+                        themeProvider.isDarkMode
+                            ? Icons.dark_mode
+                            : Icons.light_mode,
+                        color: const Color(0xFF4CAF50),
+                      ),
+                      value: themeProvider.isDarkMode,
+                      activeColor: const Color(0xFF4CAF50),
+                      onChanged: (value) {
+                        themeProvider.toggleTheme();
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
               // Logout button
               SizedBox(
                 width: double.infinity,
@@ -242,6 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   label: const Text('Logout'),
                 ),
               ),
+
               const SizedBox(height: 32),
 
               // Version info

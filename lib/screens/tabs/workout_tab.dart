@@ -273,7 +273,7 @@ class WorkoutCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
 
-                // Target muscles
+// Target muscles
                 if (workout.targetMuscles.isNotEmpty)
                   Wrap(
                     spacing: 6,
@@ -285,7 +285,18 @@ class WorkoutCard extends StatelessWidget {
                               muscle,
                               style: const TextStyle(fontSize: 11),
                             ),
-                            backgroundColor: Colors.grey[200],
+                            backgroundColor: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.grey[800] // ✅ Dark gray for dark mode
+                                : Colors
+                                    .grey[200], // ✅ Light gray for light mode
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white70 // ✅ Light text for dark mode
+                                  : Colors
+                                      .black87, // ✅ Dark text for light mode
+                            ),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                         )

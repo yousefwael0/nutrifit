@@ -233,4 +233,15 @@ class StorageService {
   static Future<void> clearAll() async {
     await _prefs.clear();
   }
+
+  /// Dark mode preference
+  static const String _darkModeKey = 'dark_mode';
+
+  static bool getDarkMode() {
+    return _prefs?.getBool(_darkModeKey) ?? false;
+  }
+
+  static Future<void> setDarkMode(bool isDark) async {
+    await _prefs?.setBool(_darkModeKey, isDark);
+  }
 }

@@ -276,7 +276,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                 }),
                 const SizedBox(height: 24),
 
-                // Target muscles
+// Target muscles
                 if (widget.workout.targetMuscles.isNotEmpty) ...[
                   const Text(
                     'Target Muscles',
@@ -290,7 +290,18 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                         .map(
                           (muscle) => Chip(
                             label: Text(muscle),
-                            backgroundColor: Colors.grey[200],
+                            backgroundColor: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.grey[800] // ✅ Dark gray for dark mode
+                                : Colors
+                                    .grey[200], // ✅ Light gray for light mode
+                            labelStyle: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white70 // ✅ Light text for dark mode
+                                  : Colors
+                                      .black87, // ✅ Dark text for light mode
+                            ),
                           ),
                         )
                         .toList(),
