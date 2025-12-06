@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nutrifit/screens/login_screen.dart';
-import 'package:nutrifit/services/storage_service.dart';
+import 'package:my_nutrition/screens/login_screen.dart';
+import 'package:my_nutrition/services/storage_service.dart';
 
 /// Splash screen shown on app launch
 class SplashScreen extends StatefulWidget {
@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
               // App Name
               Text(
-                'NutriFit',
+                'My Nutrition',
                 style: GoogleFonts.poppins(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,

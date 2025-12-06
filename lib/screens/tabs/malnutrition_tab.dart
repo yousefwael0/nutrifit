@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/services/ml_service.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/services/ml_service.dart';
 import 'package:flutter/services.dart';
 
 /// Malnutrition detection tab with camera

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:nutrifit/providers/providers.dart';
+import 'package:my_nutrition/providers/providers.dart';
 
 /// Progress tracking tab with charts and statistics
 class ProgressTab extends StatefulWidget {

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/repositories/mock_data_repository.dart';
-import 'package:nutrifit/services/ml_service.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/screens/meal_detail_screen.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/repositories/mock_data_repository.dart';
+import 'package:my_nutrition/services/ml_service.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/screens/meal_detail_screen.dart';
 import 'package:flutter/services.dart';
-import 'package:nutrifit/widgets/cached_meal_image.dart';
-import 'package:nutrifit/screens/create_meal_screen.dart';
+import 'package:my_nutrition/widgets/cached_meal_image.dart';
+import 'package:my_nutrition/screens/create_meal_screen.dart';
 
 /// Meals tab showing all meals with category filtering
 class MealsTab extends StatefulWidget {

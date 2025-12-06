@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nutrifit/screens/splash_screen.dart';
-import 'package:nutrifit/screens/home_screen.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/services/storage_service.dart';
-import 'package:nutrifit/repositories/mock_data_repository.dart';
+import 'package:my_nutrition/screens/splash_screen.dart';
+import 'package:my_nutrition/screens/home_screen.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/services/storage_service.dart';
+import 'package:my_nutrition/repositories/mock_data_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +24,7 @@ void main() async {
   await StorageService.initialize();
   MockDataRepository.loadCustomItems();
 
-  runApp(const NutriFitApp());
+  runApp(const MyNutritionApp());
 }
 
 /// Pre-cache Google Fonts to avoid download lag
@@ -39,8 +39,8 @@ Future<void> _precacheFonts() async {
   }
 }
 
-class NutriFitApp extends StatelessWidget {
-  const NutriFitApp({super.key});
+class MyNutritionApp extends StatelessWidget {
+  const MyNutritionApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class NutriFitApp extends StatelessWidget {
         // ✅ Listen to theme changes
         builder: (context, themeProvider, child) {
           return MaterialApp(
-            title: 'NutriFit',
+            title: 'My Nutrition',
             theme: _buildLightTheme(),
             darkTheme: _buildDarkTheme(),
             themeMode: themeProvider.themeMode, // ✅ Use provider's theme mode

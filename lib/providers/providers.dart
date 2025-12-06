@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/services/storage_service.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/services/storage_service.dart';
 
 /// Provider for managing user state
 class UserProvider extends ChangeNotifier {

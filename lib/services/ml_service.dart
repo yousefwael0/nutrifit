@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:nutrifit/models/models.dart';
+import 'package:my_nutrition/models/models.dart';
 
 /// Service for mock ML inference (food detection and malnutrition detection)
 /// In production, this would use tflite_flutter with real models

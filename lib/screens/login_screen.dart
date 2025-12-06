@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/screens/home_screen.dart';
-import 'package:nutrifit/services/storage_service.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/screens/home_screen.dart';
+import 'package:my_nutrition/services/storage_service.dart';
 
 /// Login and signup screen
 class LoginScreen extends StatefulWidget {
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'NutriFit',
+                  'My Nutrition',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,

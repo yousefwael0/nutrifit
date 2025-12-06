@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:nutrifit/services/storage_service.dart';
-import 'package:nutrifit/models/models.dart';
+import 'package:my_nutrition/services/storage_service.dart';
+import 'package:my_nutrition/models/models.dart';
 
 void main() {
   group('Storage Service Tests', () {

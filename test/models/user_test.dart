@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nutrifit/models/models.dart';
+import 'package:my_nutrition/models/models.dart';
 
 void main() {
   group('User Model Tests', () {

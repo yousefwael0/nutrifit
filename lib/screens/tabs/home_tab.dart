@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/repositories/mock_data_repository.dart';
-import 'package:nutrifit/screens/meal_detail_screen.dart';
-import 'package:nutrifit/screens/workout_detail_screen.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/repositories/mock_data_repository.dart';
+import 'package:my_nutrition/screens/meal_detail_screen.dart';
+import 'package:my_nutrition/screens/workout_detail_screen.dart';
 
 /// Home tab showing recent meals/workouts and insights
 class HomeTab extends StatelessWidget {

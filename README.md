@@ -8,12 +8,12 @@
 <br/>
 
 <div align="center">
-  <h1>🥗 NutriFit - Nutrition & Training Mobile App</h1>
+  <h1>🥗 My Nutrition - Nutrition & Training Mobile App</h1>
   <p><strong>A complete, production-ready Flutter mobile app for nutrition tracking and workout management with on-device ML capabilities</strong></p>
   
-  <img src="https://img.shields.io/github/workflow/status/yousefwael0/nutrifit/Flutter%20CI?style=flat-square" alt="Build Status"/>
-  <img src="https://img.shields.io/github/license/yousefwael0/nutrifit?style=flat-square" alt="License"/>
-  <img src="https://img.shields.io/github/v/release/yousefwael0/nutrifit?style=flat-square" alt="Release"/>
+  <img src="https://img.shields.io/github/workflow/status/yousefwael0/my_nutrition/Flutter%20CI?style=flat-square" alt="Build Status"/>
+  <img src="https://img.shields.io/github/license/yousefwael0/my_nutrition?style=flat-square" alt="License"/>
+  <img src="https://img.shields.io/github/v/release/yousefwael0/my_nutrition?style=flat-square" alt="Release"/>
 </div>
 
 ---
@@ -53,7 +53,7 @@
 ## 📁 Project Structure
 
 ```
-nutrifit/
+my_nutrition/
 ├── lib/
 │ ├── main.dart # App entry + theme setup
 │ ├── models/
@@ -105,7 +105,7 @@ All checks should pass ✓
 ### 1. Clone Repository
 ```bash
 git clone https://github.com/yousefwael0/nutrifit.git
-cd nutrifit
+cd my_nutrition
 ```
 ### 2. Install Dependencies
 
@@ -153,7 +153,7 @@ open ios/Runner.xcworkspace
 - Select `Runner` → Signing & Capabilities
 - Check "Automatically manage signing"
 - Select your Apple ID (Personal Team)
-- Change Bundle ID to `com.yourname.nutrifit`
+- Change Bundle ID to `com.yourname.my_nutrition`
 
 4. **Trust Developer** (First run):
 - Settings → General → VPN & Device Management
@@ -280,8 +280,8 @@ cd ..
 ### Runtime Issues
 
 **Camera permission denied:**
-- iOS: Settings → Privacy → Camera → NutriFit → Allow
-- Android: Settings → Apps → NutriFit → Permissions → Camera
+- iOS: Settings → Privacy → Camera → My Nutrition → Allow
+- Android: Settings → Apps → My Nutrition → Permissions → Camera
 
 **App won't install on iPhone:**
 - Ensure Developer Mode is enabled (iOS 16+)

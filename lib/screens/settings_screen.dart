@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/screens/login_screen.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/screens/login_screen.dart';
 
 /// Settings screen for profile and app settings
 class SettingsScreen extends StatefulWidget {
@@ -288,7 +288,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'NutriFit',
+                      'My Nutrition',
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),

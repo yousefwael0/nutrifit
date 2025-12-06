@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/screens/tabs/home_tab.dart';
-import 'package:nutrifit/screens/tabs/meals_tab.dart';
-import 'package:nutrifit/screens/tabs/workout_tab.dart';
-import 'package:nutrifit/screens/tabs/progress_tab.dart'; // ✅ New import
-import 'package:nutrifit/screens/tabs/malnutrition_tab.dart';
-import 'package:nutrifit/screens/settings_screen.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/screens/tabs/home_tab.dart';
+import 'package:my_nutrition/screens/tabs/meals_tab.dart';
+import 'package:my_nutrition/screens/tabs/workout_tab.dart';
+import 'package:my_nutrition/screens/tabs/progress_tab.dart'; // ✅ New import
+import 'package:my_nutrition/screens/tabs/malnutrition_tab.dart';
+import 'package:my_nutrition/screens/settings_screen.dart';
 
 /// Main home screen with bottom navigation
 class HomeScreen extends StatefulWidget {

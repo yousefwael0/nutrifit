@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:nutrifit/models/models.dart';
+import 'package:my_nutrition/models/models.dart';
 
 /// Service for handling local storage with per-user data isolation
 class StorageService {

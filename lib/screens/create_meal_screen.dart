@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/services/storage_service.dart';
-import 'package:nutrifit/repositories/mock_data_repository.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/services/storage_service.dart';
+import 'package:my_nutrition/repositories/mock_data_repository.dart';
 
 /// Screen for creating/editing custom meals
 class CreateMealScreen extends StatefulWidget {

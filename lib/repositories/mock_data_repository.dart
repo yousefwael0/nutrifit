@@ -1,5 +1,5 @@
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/services/storage_service.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/services/storage_service.dart';
 
 /// Mock data repository with pre-defined meals and workouts
 class MockDataRepository {

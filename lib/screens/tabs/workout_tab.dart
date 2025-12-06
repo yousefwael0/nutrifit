@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nutrifit/models/models.dart';
-import 'package:nutrifit/repositories/mock_data_repository.dart';
-import 'package:nutrifit/providers/providers.dart';
-import 'package:nutrifit/screens/workout_timer_screen.dart';
-import 'package:nutrifit/screens/workout_detail_screen.dart';
-import 'package:nutrifit/widgets/cached_meal_image.dart';
-import 'package:nutrifit/screens/create_workout_screen.dart';
+import 'package:my_nutrition/models/models.dart';
+import 'package:my_nutrition/repositories/mock_data_repository.dart';
+import 'package:my_nutrition/providers/providers.dart';
+import 'package:my_nutrition/screens/workout_timer_screen.dart';
+import 'package:my_nutrition/screens/workout_detail_screen.dart';
+import 'package:my_nutrition/widgets/cached_meal_image.dart';
+import 'package:my_nutrition/screens/create_workout_screen.dart';
 
 /// Workout tab showing weight lifting and cardio workouts
 class WorkoutTab extends StatefulWidget {
