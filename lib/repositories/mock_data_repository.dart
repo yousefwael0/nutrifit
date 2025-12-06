@@ -5,7 +5,7 @@ import 'package:nutrifit/services/storage_service.dart';
 class MockDataRepository {
   /// All available meals
   static final List<Meal> allMeals = [
-    // ==================== BREAKFAST ====================
+    // ==================== BREAKFAST (5 items) ====================
     Meal(
       id: 'meal_001',
       name: 'Oatmeal with Berries',
@@ -23,13 +23,13 @@ class MockDataRepository {
       fats: 5,
       portionSize: 350,
       imageUrl:
-          'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800&q=85',
+          'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&q=85', // Vibrant oatmeal bowl
       description:
           'Creamy oatmeal topped with fresh blueberries, strawberries, and a drizzle of golden honey.',
     ),
     Meal(
       id: 'meal_002',
-      name: 'Scrambled Eggs with Avocado Toast',
+      name: 'Scrambled Eggs & Avocado',
       category: 'Breakfast',
       ingredients: [
         'Eggs 3',
@@ -44,37 +44,81 @@ class MockDataRepository {
       fats: 20,
       portionSize: 300,
       imageUrl:
-          'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&q=85',
+          'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&q=85', // Professional avocado toast
       description:
           'Fluffy scrambled eggs served on toasted sourdough with creamy avocado and fresh tomatoes.',
     ),
     Meal(
       id: 'meal_003',
-      name: 'Protein Smoothie Bowl',
+      name: 'Protein Pancakes',
       category: 'Breakfast',
       ingredients: [
         'Banana 1',
-        'Frozen berries 100g',
+        'Eggs 2',
         'Protein powder 30g',
-        'Almond milk 150ml',
-        'Granola 30g',
-        'Coconut flakes',
+        'Blueberries 80g',
+        'Greek yogurt 50g',
+        'Maple syrup 1tbsp',
       ],
-      calories: 340,
-      protein: 28,
+      calories: 380,
+      protein: 32,
       carbs: 42,
       fats: 8,
-      portionSize: 350,
+      portionSize: 320,
       imageUrl:
-          'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800&q=85',
+          'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=800&q=85', // Stunning pancake stack
       description:
-          'Thick acai-style smoothie bowl topped with granola, fresh fruit, and coconut.',
+          'Fluffy protein-packed pancakes topped with fresh blueberries and Greek yogurt.',
     ),
-
-    // ==================== LUNCH ====================
     Meal(
       id: 'meal_004',
-      name: 'Grilled Chicken Caesar Salad',
+      name: 'Veggie Omelet',
+      category: 'Breakfast',
+      ingredients: [
+        'Eggs 3',
+        'Spinach 50g',
+        'Mushrooms 50g',
+        'Bell peppers 40g',
+        'Feta cheese 30g',
+        'Olive oil 1tsp',
+      ],
+      calories: 320,
+      protein: 24,
+      carbs: 12,
+      fats: 20,
+      portionSize: 280,
+      imageUrl:
+          'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=800&q=85', // Close-up omelet
+      description:
+          'Colorful vegetable omelet packed with spinach, mushrooms, peppers, and tangy feta cheese.',
+    ),
+    Meal(
+      id: 'meal_005',
+      name: 'Acai Bowl',
+      category: 'Breakfast',
+      ingredients: [
+        'Acai puree 100g',
+        'Banana 1',
+        'Granola 50g',
+        'Fresh strawberries 80g',
+        'Coconut flakes 10g',
+        'Honey drizzle',
+      ],
+      calories: 360,
+      protein: 8,
+      carbs: 62,
+      fats: 10,
+      portionSize: 400,
+      imageUrl:
+          'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=800&q=85', // Beautiful fruit bowl
+      description:
+          'Instagram-worthy acai bowl topped with granola, fresh fruit, and coconut flakes.',
+    ),
+
+    // ==================== LUNCH (5 items) ====================
+    Meal(
+      id: 'meal_006',
+      name: 'Grilled Chicken Caesar',
       category: 'Lunch',
       ingredients: [
         'Grilled chicken breast 150g',
@@ -89,12 +133,12 @@ class MockDataRepository {
       fats: 16,
       portionSize: 400,
       imageUrl:
-          'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&q=85',
+          'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=800&q=85', // Crisp salad
       description:
           'Classic Caesar with juicy grilled chicken, crisp romaine, parmesan shavings, and homemade croutons.',
     ),
     Meal(
-      id: 'meal_005',
+      id: 'meal_007',
       name: 'Teriyaki Salmon Bowl',
       category: 'Lunch',
       ingredients: [
@@ -111,13 +155,13 @@ class MockDataRepository {
       fats: 18,
       portionSize: 450,
       imageUrl:
-          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=85',
+          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=85', // Perfect salmon bowl
       description:
           'Japanese-inspired bowl with glazed salmon, fluffy brown rice, edamame, and pickled vegetables.',
     ),
     Meal(
-      id: 'meal_006',
-      name: 'Mediterranean Quinoa Bowl',
+      id: 'meal_008',
+      name: 'Mediterranean Quinoa',
       category: 'Lunch',
       ingredients: [
         'Quinoa 150g',
@@ -134,15 +178,81 @@ class MockDataRepository {
       fats: 18,
       portionSize: 500,
       imageUrl:
-          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=85',
+          'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=85', // Healthy veggie bowl
       description:
           'Vibrant Mediterranean bowl with protein-rich quinoa, crispy chickpeas, fresh veggies, and creamy tahini.',
     ),
-
-    // ==================== DINNER ====================
     Meal(
-      id: 'meal_007',
-      name: 'Spaghetti with Turkey Meatballs',
+      id: 'meal_009',
+      name: 'Turkey & Avocado Wrap',
+      category: 'Lunch',
+      ingredients: [
+        'Whole wheat tortilla',
+        'Sliced turkey 120g',
+        'Avocado 1/2',
+        'Mixed greens 50g',
+        'Tomato slices',
+        'Mustard mayo',
+      ],
+      calories: 420,
+      protein: 32,
+      carbs: 38,
+      fats: 14,
+      portionSize: 320,
+      imageUrl:
+          'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800&q=85', // Fresh wrap
+      description:
+          'Hearty wrap filled with lean turkey, creamy avocado, fresh greens, and tangy sauce.',
+    ),
+    Meal(
+      id: 'meal_010',
+      name: 'Thai Noodle Bowl',
+      category: 'Lunch',
+      ingredients: [
+        'Rice noodles 150g',
+        'Grilled chicken 130g',
+        'Peanut sauce 3tbsp',
+        'Shredded carrots',
+        'Bean sprouts',
+        'Fresh cilantro',
+        'Crushed peanuts',
+      ],
+      calories: 540,
+      protein: 36,
+      carbs: 58,
+      fats: 16,
+      portionSize: 480,
+      imageUrl:
+          'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800&q=85', // Appetizing noodles
+      description:
+          'Thai-inspired noodle bowl with savory peanut sauce, tender chicken, and fresh herbs.',
+    ),
+
+    // ==================== DINNER (5 items) ====================
+    Meal(
+      id: 'meal_011',
+      name: 'Grilled Ribeye Steak',
+      category: 'Dinner',
+      ingredients: [
+        'Ribeye steak 200g',
+        'Roasted potatoes 150g',
+        'Grilled asparagus 100g',
+        'Garlic herb butter 1tbsp',
+        'Fresh rosemary',
+      ],
+      calories: 640,
+      protein: 48,
+      carbs: 32,
+      fats: 36,
+      portionSize: 500,
+      imageUrl:
+          'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800&q=85', // Juicy steak
+      description:
+          'Perfectly grilled ribeye with herb butter, crispy roasted potatoes, and charred asparagus.',
+    ),
+    Meal(
+      id: 'meal_012',
+      name: 'Spaghetti & Meatballs',
       category: 'Dinner',
       ingredients: [
         'Whole wheat spaghetti 200g',
@@ -157,12 +267,12 @@ class MockDataRepository {
       fats: 14,
       portionSize: 550,
       imageUrl:
-          'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800&q=85',
+          'https://images.unsplash.com/photo-1515516947383-d15674029dc1?w=800&q=85', // Rich pasta dish
       description:
           'Classic Italian comfort food with lean turkey meatballs in rich tomato sauce over al dente pasta.',
     ),
     Meal(
-      id: 'meal_008',
+      id: 'meal_013',
       name: 'Asian Beef Stir-Fry',
       category: 'Dinner',
       ingredients: [
@@ -179,13 +289,13 @@ class MockDataRepository {
       fats: 14,
       portionSize: 500,
       imageUrl:
-          'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&q=85',
+          'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=85', // Colorful stir fry
       description:
           'Colorful wok-tossed beef with crisp vegetables in savory ginger-soy glaze over steamed rice.',
     ),
     Meal(
-      id: 'meal_009',
-      name: 'Herb-Crusted Cod with Roasted Vegetables',
+      id: 'meal_014',
+      name: 'Herb-Crusted Cod',
       category: 'Dinner',
       ingredients: [
         'Cod fillet 180g',
@@ -201,14 +311,36 @@ class MockDataRepository {
       fats: 10,
       portionSize: 480,
       imageUrl:
-          'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=800&q=85',
+          'https://images.unsplash.com/photo-1519708227418-8fb0291d1c57?w=800&q=85', // Elegant fish dish
       description:
           'Flaky herb-crusted cod with caramelized sweet potato, tender asparagus, and roasted tomatoes.',
     ),
-
-    // ==================== SNACKS ====================
     Meal(
-      id: 'meal_010',
+      id: 'meal_015',
+      name: 'BBQ Chicken Pizza',
+      category: 'Dinner',
+      ingredients: [
+        'Thin crust pizza base',
+        'BBQ sauce 50g',
+        'Grilled chicken 120g',
+        'Red onion slices',
+        'Mozzarella cheese 80g',
+        'Fresh cilantro',
+      ],
+      calories: 620,
+      protein: 42,
+      carbs: 68,
+      fats: 18,
+      portionSize: 350,
+      imageUrl:
+          'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=85', // Delicious pizza
+      description:
+          'Gourmet BBQ chicken pizza with tangy sauce, melted mozzarella, red onions, and fresh cilantro.',
+    ),
+
+    // ==================== SNACKS (5 items) ====================
+    Meal(
+      id: 'meal_016',
       name: 'Greek Yogurt Parfait',
       category: 'Snacks',
       ingredients: [
@@ -224,49 +356,91 @@ class MockDataRepository {
       fats: 9,
       portionSize: 300,
       imageUrl:
-          'https://images.unsplash.com/photo-1488477181946-6428a0291840?w=800&q=85',
+          'https://images.unsplash.com/photo-1488477181946-6428a0291840?w=800&q=85', // Parfait cup
       description:
           'Layered parfait with thick Greek yogurt, crunchy granola, fresh berries, and honey.',
     ),
     Meal(
-      id: 'meal_011',
-      name: 'Apple Slices with Almond Butter',
+      id: 'meal_017',
+      name: 'Protein Smoothie',
       category: 'Snacks',
       ingredients: [
-        'Honeycrisp apple 1 medium',
-        'Almond butter 2tbsp',
-        'Cinnamon sprinkle',
+        'Banana 1',
+        'Protein powder 30g',
+        'Almond milk 250ml',
+        'Peanut butter 1tbsp',
+        'Ice cubes',
       ],
-      calories: 240,
-      protein: 8,
-      carbs: 28,
-      fats: 12,
-      portionSize: 180,
-      imageUrl:
-          'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=800&q=85',
-      description:
-          'Crisp apple slices paired with creamy almond butter and a hint of cinnamon.',
-    ),
-    Meal(
-      id: 'meal_012',
-      name: 'Dark Chocolate Protein Balls',
-      category: 'Snacks',
-      ingredients: [
-        'Medjool dates 100g',
-        'Raw almonds 50g',
-        'Dark cocoa powder 2tbsp',
-        'Protein powder 20g',
-        'Coconut oil 1tsp',
-      ],
-      calories: 280,
-      protein: 14,
+      calories: 320,
+      protein: 28,
       carbs: 32,
       fats: 10,
-      portionSize: 120,
+      portionSize: 400,
       imageUrl:
-          'https://images.unsplash.com/photo-1599599810694-b5ac4dd1529f?w=800&q=85',
+          'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?w=800&q=85', // Smoothie glass
       description:
-          'Rich chocolate energy balls made with dates, almonds, and protein powder - perfect pre-workout fuel.',
+          'Creamy protein shake with banana, peanut butter, and vanilla protein - perfect post-workout fuel.',
+    ),
+    Meal(
+      id: 'meal_018',
+      name: 'Hummus & Veggies',
+      category: 'Snacks',
+      ingredients: [
+        'Hummus 100g',
+        'Carrot sticks 80g',
+        'Cucumber slices 80g',
+        'Bell pepper strips 60g',
+        'Cherry tomatoes 40g',
+      ],
+      calories: 180,
+      protein: 7,
+      carbs: 22,
+      fats: 8,
+      portionSize: 360,
+      imageUrl:
+          'https://images.unsplash.com/photo-1637949385162-e416fb15b2ce?w=800&q=85', // Hummus platter
+      description:
+          'Fresh crunchy vegetables served with creamy, protein-rich hummus dip.',
+    ),
+    Meal(
+      id: 'meal_019',
+      name: 'Trail Mix',
+      category: 'Snacks',
+      ingredients: [
+        'Mixed nuts 40g',
+        'Dark chocolate chips 20g',
+        'Dried cranberries 30g',
+        'Pumpkin seeds 15g',
+      ],
+      calories: 320,
+      protein: 10,
+      carbs: 28,
+      fats: 20,
+      portionSize: 105,
+      imageUrl:
+          'https://images.unsplash.com/photo-1536658113075-bd0a7d05a527?w=800&q=85', // Trail mix
+      description:
+          'Energy-packed trail mix with nuts, dark chocolate, dried fruit, and seeds.',
+    ),
+    Meal(
+      id: 'meal_020',
+      name: 'Rice Cakes & Butter',
+      category: 'Snacks',
+      ingredients: [
+        'Brown rice cakes 2',
+        'Almond butter 2tbsp',
+        'Banana slices',
+        'Cinnamon sprinkle',
+      ],
+      calories: 260,
+      protein: 9,
+      carbs: 32,
+      fats: 12,
+      portionSize: 150,
+      imageUrl:
+          'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=800&q=85', // Rice cake snack
+      description:
+          'Crunchy rice cakes topped with creamy almond butter, fresh banana, and cinnamon.',
     ),
   ];
 
@@ -302,7 +476,7 @@ class MockDataRepository {
 
   /// All available workouts
   static final List<Workout> allWorkouts = [
-    // ==================== WEIGHT LIFTING ====================
+    // ==================== WEIGHT LIFTING (6 items) ====================
     Workout(
       id: 'workout_001',
       name: 'Barbell Bench Press',
@@ -318,7 +492,7 @@ class MockDataRepository {
       targetMuscles: ['Chest', 'Triceps', 'Front Shoulders'],
       caloriesBurned: 150,
       imageUrl:
-          'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=85',
+          'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=85', // Intense gym press
       description:
           'The king of upper body exercises - builds powerful chest, shoulders, and triceps.',
       durationMinutes: 20,
@@ -338,7 +512,7 @@ class MockDataRepository {
       targetMuscles: ['Lower Back', 'Glutes', 'Hamstrings', 'Traps', 'Core'],
       caloriesBurned: 180,
       imageUrl:
-          'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=85',
+          'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=85', // Weights focus
       description:
           'The ultimate full-body strength builder - works nearly every major muscle group.',
       durationMinutes: 25,
@@ -358,16 +532,76 @@ class MockDataRepository {
       targetMuscles: ['Quadriceps', 'Glutes', 'Hamstrings', 'Core'],
       caloriesBurned: 160,
       imageUrl:
-          'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=85',
+          'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=85', // Squat rack
       description:
           'The king of leg exercises - builds massive lower body strength and muscle mass.',
       durationMinutes: 22,
     ),
-
-    // ==================== CARDIO ====================
     Workout(
       id: 'workout_004',
-      name: 'Outdoor Running',
+      name: 'Dumbbell Shoulder Press',
+      category: 'Weight Lifting',
+      steps: [
+        'Sit on bench with back support, feet flat on floor',
+        'Hold dumbbells at shoulder height with palms facing forward',
+        'Press dumbbells overhead until arms are fully extended',
+        'Lower with control back to starting position',
+        'Keep core engaged and avoid arching lower back',
+        'Perform 4 sets of 10-12 reps',
+      ],
+      targetMuscles: ['Shoulders', 'Triceps', 'Upper Chest'],
+      caloriesBurned: 140,
+      imageUrl:
+          'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=85', // Dumbbell press
+      description:
+          'Build boulder shoulders with this classic pressing movement for maximum shoulder development.',
+      durationMinutes: 18,
+    ),
+    Workout(
+      id: 'workout_005',
+      name: 'Barbell Rows',
+      category: 'Weight Lifting',
+      steps: [
+        'Bend forward at hips with slight knee bend, back straight',
+        'Grip barbell slightly wider than shoulder-width',
+        'Pull bar to lower chest/upper abdomen',
+        'Squeeze shoulder blades together at the top',
+        'Lower bar with control to full arm extension',
+        'Complete 4 sets of 8-10 reps',
+      ],
+      targetMuscles: ['Upper Back', 'Lats', 'Biceps', 'Rear Delts'],
+      caloriesBurned: 145,
+      imageUrl:
+          'https://images.unsplash.com/photo-1598971639058-211a74a96c10?w=800&q=85', // Barbell row
+      description:
+          'Build a thick, powerful back with this compound pulling exercise.',
+      durationMinutes: 20,
+    ),
+    Workout(
+      id: 'workout_006',
+      name: 'Leg Press',
+      category: 'Weight Lifting',
+      steps: [
+        'Sit in leg press machine with back and head against pad',
+        'Place feet shoulder-width apart on platform',
+        'Release safety bars and slowly lower weight',
+        'Lower until knees are at 90-degree angle',
+        'Press through heels to extend legs fully',
+        'Perform 4 sets of 12-15 reps',
+      ],
+      targetMuscles: ['Quadriceps', 'Glutes', 'Hamstrings'],
+      caloriesBurned: 155,
+      imageUrl:
+          'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=85', // Gym machine leg press
+      description:
+          'Heavy leg development exercise that safely loads massive weight for quad growth.',
+      durationMinutes: 20,
+    ),
+
+    // ==================== CARDIO (6 items) ====================
+    Workout(
+      id: 'workout_007',
+      name: 'Trail Running',
       category: 'Cardio',
       steps: [
         'Start with 5-minute brisk walk to warm up muscles',
@@ -380,13 +614,13 @@ class MockDataRepository {
       targetMuscles: ['Heart & Lungs', 'Calves', 'Quads', 'Hamstrings'],
       caloriesBurned: 350,
       imageUrl:
-          'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=85',
+          'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=85', // Scenic trail run
       description:
           'Classic steady-state cardio - improves cardiovascular endurance and burns serious calories.',
       durationMinutes: 35,
     ),
     Workout(
-      id: 'workout_005',
+      id: 'workout_008',
       name: 'Indoor Cycling',
       category: 'Cardio',
       steps: [
@@ -400,14 +634,14 @@ class MockDataRepository {
       targetMuscles: ['Quads', 'Hamstrings', 'Calves', 'Glutes', 'Core'],
       caloriesBurned: 400,
       imageUrl:
-          'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=85',
+          'https://images.unsplash.com/photo-1534891858418-c743a3551900?w=800&q=85', // Spin class
       description:
           'Low-impact cardio powerhouse - torch calories while protecting your joints.',
       durationMinutes: 45,
     ),
     Workout(
-      id: 'workout_006',
-      name: 'HIIT Circuit Training',
+      id: 'workout_009',
+      name: 'HIIT Circuit',
       category: 'Cardio',
       steps: [
         'Warm up: 2 minutes jumping jacks and dynamic stretching',
@@ -420,10 +654,70 @@ class MockDataRepository {
       targetMuscles: ['Full Body', 'Core', 'Cardiovascular System'],
       caloriesBurned: 320,
       imageUrl:
-          'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&q=85',
+          'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?w=800&q=85', // Intense action
       description:
           'Maximum calorie burn in minimum time - boosts metabolism for hours after workout.',
       durationMinutes: 25,
+    ),
+    Workout(
+      id: 'workout_010',
+      name: 'Swimming Laps',
+      category: 'Cardio',
+      steps: [
+        'Warm up with 5 minutes easy freestyle swimming',
+        'Swim 10 laps (250m) at moderate pace',
+        'Rest 30 seconds between every 2 laps',
+        'Focus on smooth breathing and efficient strokes',
+        'Cool down with 5 minutes of easy backstroke',
+        'Stretch shoulders and legs poolside',
+      ],
+      targetMuscles: ['Full Body', 'Shoulders', 'Core', 'Legs'],
+      caloriesBurned: 380,
+      imageUrl:
+          'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&q=85', // Swimming pool
+      description:
+          'Full-body, low-impact cardio that builds endurance while being gentle on joints.',
+      durationMinutes: 40,
+    ),
+    Workout(
+      id: 'workout_011',
+      name: 'Jump Rope Intervals',
+      category: 'Cardio',
+      steps: [
+        'Warm up with light skipping for 3 minutes',
+        'Jump rope at high intensity for 1 minute',
+        'Rest for 30 seconds (walk in place)',
+        'Repeat intervals for 15 minutes total',
+        'Mix in double-unders if advanced',
+        'Cool down with slow skipping for 2 minutes',
+      ],
+      targetMuscles: ['Calves', 'Quads', 'Shoulders', 'Core'],
+      caloriesBurned: 310,
+      imageUrl:
+          'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=85', // Jump rope
+      description:
+          'High-intensity rope jumping that improves coordination, burns fat, and builds calf strength.',
+      durationMinutes: 20,
+    ),
+    Workout(
+      id: 'workout_012',
+      name: 'Stair Climbing',
+      category: 'Cardio',
+      steps: [
+        'Find a staircase (at least 3-4 floors)',
+        'Warm up by walking up and down slowly twice',
+        'Climb stairs at brisk pace for 2 minutes',
+        'Walk down slowly for active recovery (1 minute)',
+        'Repeat climb-and-descend for 25 minutes',
+        'Finish with 5 minutes of walking and leg stretches',
+      ],
+      targetMuscles: ['Glutes', 'Quads', 'Hamstrings', 'Calves', 'Core'],
+      caloriesBurned: 360,
+      imageUrl:
+          'https://images.unsplash.com/photo-1502224562085-639556652f33?w=800&q=85', // Stairs runner
+      description:
+          'Intense lower-body cardio that sculpts legs and glutes while burning maximum calories.',
+      durationMinutes: 30,
     ),
   ];
 
@@ -509,7 +803,6 @@ class MockDataRepository {
   static void loadCustomItems() {
     final customMeals = StorageService.getCustomMeals();
     final customWorkouts = StorageService.getCustomWorkouts();
-
     allMeals.addAll(customMeals);
     allWorkouts.addAll(customWorkouts);
   }
