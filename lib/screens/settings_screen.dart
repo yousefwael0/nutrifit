@@ -249,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: const Color(0xFF4CAF50),
                       ),
                       value: themeProvider.isDarkMode,
-                      activeColor: const Color(0xFF4CAF50),
+                      activeThumbColor: const Color(0xFF4CAF50),
                       onChanged: (value) {
                         themeProvider.toggleTheme();
                       },

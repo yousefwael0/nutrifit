@@ -149,7 +149,7 @@ class _CreateMealScreenState extends State<CreateMealScreen> {
 
               // Category
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(labelText: 'Category'),
                 items: ['Breakfast', 'Lunch', 'Dinner', 'Snacks']
                     .map(

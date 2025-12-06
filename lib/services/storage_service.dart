@@ -238,10 +238,10 @@ class StorageService {
   static const String _darkModeKey = 'dark_mode';
 
   static bool getDarkMode() {
-    return _prefs?.getBool(_darkModeKey) ?? false;
+    return _prefs.getBool(_darkModeKey) ?? false;
   }
 
   static Future<void> setDarkMode(bool isDark) async {
-    await _prefs?.setBool(_darkModeKey, isDark);
+    await _prefs.setBool(_darkModeKey, isDark);
   }
 }

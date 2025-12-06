@@ -143,7 +143,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
 
               // Category
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(labelText: 'Category'),
                 items: ['Weight Lifting', 'Cardio']
                     .map(
