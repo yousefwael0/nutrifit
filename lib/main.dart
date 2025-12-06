@@ -6,6 +6,7 @@ import 'package:nutrifit/screens/splash_screen.dart';
 import 'package:nutrifit/screens/home_screen.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/services/storage_service.dart';
+import 'package:nutrifit/repositories/mock_data_repository.dart';
 //import 'package:cached_network_image/cached_network_image.dart'; // ✅ Add this
 //import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -28,6 +29,9 @@ void main() async {
   await _precacheFonts();
 
   await StorageService.initialize();
+
+  MockDataRepository.loadCustomItems();
+
   runApp(const NutriFitApp());
 }
 

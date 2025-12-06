@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:nutrifit/models/models.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/home_screen.dart';
+import 'package:nutrifit/services/storage_service.dart';
 
 /// Login and signup screen
 class LoginScreen extends StatefulWidget {
@@ -57,13 +58,28 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // If page is 0 (login), go to signup
+    // ✅ Check if user exists
     if (_currentPage == 0) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      return;
+      final existingUser = StorageService.getUserByEmail(email);
+
+      if (existingUser != null) {
+        // ✅ User exists - log them in directly
+        context.read<UserProvider>().loginUser(existingUser).then((_) {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          }
+        });
+        return;
+      } else {
+        // ✅ New user - go to signup
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
     }
 
     // Validate signup form
@@ -78,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      // Create user object
+      // Create new user
       final user = User(
         id: const Uuid().v4(),
         email: email,
@@ -90,12 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (mounted) {
-        context.read<UserProvider>().loginUser(user).then((_) {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          }
+        // ✅ Save user data with email namespace
+        StorageService.saveUserData(user).then((_) {
+          context.read<UserProvider>().loginUser(user).then((_) {
+            if (mounted) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            }
+          });
         });
       }
     } catch (e) {
@@ -107,20 +126,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (page) {
-          setState(() => _currentPage = page);
-        },
-        children: [
-          // Login page
-          _buildLoginPage(),
-          // Signup page
-          _buildSignupPage(),
-        ],
-      ),
-    );
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (page) {
+              setState(() => _currentPage = page);
+            },
+            children: [
+              // Login page
+              _buildLoginPage(),
+              // Signup page
+              _buildSignupPage(),
+            ],
+          ),
+        ));
   }
 
   /// Build login page

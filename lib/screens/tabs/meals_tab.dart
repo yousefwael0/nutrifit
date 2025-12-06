@@ -8,6 +8,7 @@ import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/meal_detail_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:nutrifit/widgets/cached_meal_image.dart';
+import 'package:nutrifit/screens/create_meal_screen.dart';
 
 /// Meals tab showing all meals with category filtering
 class MealsTab extends StatefulWidget {
@@ -152,72 +153,106 @@ class _MealsTabState extends State<MealsTab> {
     final meals = MockDataRepository.getMealsByCategory(_selectedCategory);
     final categories = MockDataRepository.getAllMealCategories();
 
-    return Scaffold(
-      body: Column(
-        children: [
-          // Enhanced category selector with custom icons
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: categories.map((category) {
-                  final isSelected = category == _selectedCategory;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      avatar: Icon(
-                        _getCategoryIcon(category),
-                        size: 18,
-                        color: isSelected
-                            ? Colors.white
-                            : _getCategoryColor(category),
+    // ✅ Wrap entire body with GestureDetector for keyboard dismissal
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // Dismiss keyboard on tap
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Enhanced category selector with custom icons
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: categories.map((category) {
+                    final isSelected = category == _selectedCategory;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        avatar: Icon(
+                          _getCategoryIcon(category),
+                          size: 18,
+                          color: isSelected
+                              ? Colors.white
+                              : _getCategoryColor(category),
+                        ),
+                        label: Text(category),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          setState(() => _selectedCategory = category);
+                        },
+                        backgroundColor: Colors.grey[200],
+                        selectedColor: _getCategoryColor(category),
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
                       ),
-                      label: Text(category),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() => _selectedCategory = category);
-                      },
-                      backgroundColor: Colors.grey[200],
-                      selectedColor: _getCategoryColor(category),
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
-          ),
 
-          // Meals list with empty state
-          Expanded(
-            child: meals.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    padding: const EdgeInsets.all(12),
-                    itemCount: meals.length,
-                    itemBuilder: (context, index) {
-                      // ✅ FIXED: Extract to separate widget
-                      return MealCard(
-                        meal: meals[index],
-                        categoryIcon: _getCategoryIcon(meals[index].category),
-                        categoryColor: _getCategoryColor(meals[index].category),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'meals_camera_fab',
-        onPressed: _openCamera,
-        icon: const Icon(Icons.camera_alt),
-        label: const Text('Scan Food'),
+            // Meals list
+            Expanded(
+              child: meals.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+                          .onDrag, // ✅ Dismiss on scroll
+                      padding: const EdgeInsets.all(12),
+                      itemCount: meals.length,
+                      itemBuilder: (context, index) {
+                        return MealCard(
+                          meal: meals[index],
+                          categoryIcon: _getCategoryIcon(meals[index].category),
+                          categoryColor:
+                              _getCategoryColor(meals[index].category),
+                          onUpdate: () => setState(() {}), // ✅ Trigger refresh
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ✅ Add custom meal button
+            FloatingActionButton(
+              heroTag: 'meals_add_fab',
+              onPressed: () => _showCreateMealDialog(),
+              child: const Icon(Icons.add),
+            ),
+            const SizedBox(height: 12),
+            FloatingActionButton.extended(
+              heroTag: 'meals_camera_fab',
+              onPressed: _openCamera,
+              icon: const Icon(Icons.camera_alt),
+              label: const Text('Scan Food'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  /// ✅ Show create meal dialog and refresh on create
+  void _showCreateMealDialog() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateMealScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+
+    // ✅ Refresh tab if meal was created
+    if (result == true && mounted) {
+      setState(() {});
+    }
   }
 
   /// Build empty state with illustration
@@ -259,12 +294,14 @@ class MealCard extends StatelessWidget {
   final Meal meal;
   final IconData categoryIcon;
   final Color categoryColor;
+  final VoidCallback? onUpdate; // ✅ Add callback
 
   const MealCard({
     super.key,
     required this.meal,
     required this.categoryIcon,
     required this.categoryColor,
+    this.onUpdate,
   });
 
   @override
@@ -277,12 +314,18 @@ class MealCard extends StatelessWidget {
       key: ValueKey('meal_card_${meal.id}'),
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
+        onTap: () async {
+          // ✅ Listen for result from detail screen
+          final result = await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => MealDetailScreen(meal: meal),
             ),
           );
+
+          // ✅ Trigger refresh if changes were made
+          if (result == true && onUpdate != null) {
+            onUpdate!();
+          }
         },
         borderRadius: BorderRadius.circular(16),
         child: Column(

@@ -1,4 +1,5 @@
 import 'package:nutrifit/models/models.dart';
+import 'package:nutrifit/services/storage_service.dart';
 
 /// Mock data repository with pre-defined meals and workouts
 class MockDataRepository {
@@ -454,5 +455,62 @@ class MockDataRepository {
       categories.add(workout.category);
     }
     return categories.toList();
+  }
+
+  // ==================== CUSTOM ITEMS ====================
+
+  /// Add custom meal to repository
+  static void addCustomMeal(Meal meal) {
+    allMeals.add(meal);
+  }
+
+  /// Add custom workout to repository
+  static void addCustomWorkout(Workout workout) {
+    allWorkouts.add(workout);
+  }
+
+  /// ✅ Update meal in repository
+  static void updateMeal(Meal updatedMeal) {
+    final index = allMeals.indexWhere((m) => m.id == updatedMeal.id);
+    if (index != -1) {
+      allMeals[index] = updatedMeal;
+    }
+  }
+
+  /// ✅ Delete meal from repository
+  static void deleteMeal(String mealId) {
+    allMeals.removeWhere((m) => m.id == mealId);
+  }
+
+  /// ✅ Update workout in repository
+  static void updateWorkout(Workout updatedWorkout) {
+    final index = allWorkouts.indexWhere((w) => w.id == updatedWorkout.id);
+    if (index != -1) {
+      allWorkouts[index] = updatedWorkout;
+    }
+  }
+
+  /// ✅ Delete workout from repository
+  static void deleteWorkout(String workoutId) {
+    allWorkouts.removeWhere((w) => w.id == workoutId);
+  }
+
+  /// ✅ Check if meal is custom (can be edited/deleted)
+  static bool isCustomMeal(String mealId) {
+    return mealId.startsWith('custom_meal_');
+  }
+
+  /// ✅ Check if workout is custom (can be edited/deleted)
+  static bool isCustomWorkout(String workoutId) {
+    return workoutId.startsWith('custom_workout_');
+  }
+
+  /// Load custom items from storage
+  static void loadCustomItems() {
+    final customMeals = StorageService.getCustomMeals();
+    final customWorkouts = StorageService.getCustomWorkouts();
+
+    allMeals.addAll(customMeals);
+    allWorkouts.addAll(customWorkouts);
   }
 }

@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:nutrifit/models/models.dart';
 import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/services/storage_service.dart';
+import 'package:nutrifit/repositories/mock_data_repository.dart';
 import 'package:nutrifit/widgets/cached_meal_image.dart';
+import 'package:nutrifit/screens/create_workout_screen.dart';
 
 /// Workout detail screen
 class WorkoutDetailScreen extends StatefulWidget {
@@ -44,36 +46,104 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
     }
   }
 
+  /// ✅ Delete workout with confirmation (NO restrictions)
+  void _deleteWorkout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Workout'),
+        content:
+            Text('Are you sure you want to delete "${widget.workout.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Delete from storage and repository
+              if (MockDataRepository.isCustomWorkout(widget.workout.id)) {
+                await StorageService.deleteCustomWorkout(widget.workout.id);
+              }
+              MockDataRepository.deleteWorkout(widget.workout.id);
+
+              if (mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(
+                    context, true); // ✅ Return true to trigger refresh
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Workout deleted')),
+                );
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// ✅ Edit workout (NO restrictions)
+  void _editWorkout() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>
+            CreateWorkoutScreen(existingWorkout: widget.workout),
+        fullscreenDialog: true,
+      ),
+    );
+
+    // ✅ Refresh if edited
+    if (result == true && mounted) {
+      Navigator.pop(context, true); // Return true to trigger parent refresh
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isCustom = MockDataRepository.isCustomWorkout(widget.workout.id);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Workout Details'),
         actions: [
+          // ✅ Edit button - ALWAYS SHOW
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: _editWorkout,
+            tooltip: 'Edit',
+          ),
+          // Favorite button
           Builder(
             builder: (context) {
-              final isFavorite =
-                  context.watch<FavoritesProvider>().isWorkoutFavorite(
-                        widget.workout.id,
-                      );
+              final isFavorite = context
+                  .watch<FavoritesProvider>()
+                  .isWorkoutFavorite(widget.workout.id);
               return IconButton(
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: isFavorite ? Colors.red : null,
                 ),
                 onPressed: () {
-                  context.read<FavoritesProvider>().toggleWorkoutFavorite(
-                        widget.workout.id,
-                      );
+                  context
+                      .read<FavoritesProvider>()
+                      .toggleWorkoutFavorite(widget.workout.id);
                 },
               );
             },
+          ),
+          // ✅ Delete button - ALWAYS SHOW
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _deleteWorkout,
+            tooltip: 'Delete',
           ),
         ],
       ),
       body: ListView(
         children: [
-          // ✅ Hero cached image
+          // Hero cached image
           Hero(
             tag: 'workout_${widget.workout.id}',
             child: CachedMealImage(
@@ -98,11 +168,26 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                 ),
                 const SizedBox(height: 8),
 
-                // Category
-                Chip(
-                  label: Text(widget.workout.category),
-                  backgroundColor: _getCategoryColor(widget.workout.category),
-                  labelStyle: const TextStyle(color: Colors.white),
+                // Category chip
+                Row(
+                  children: [
+                    Chip(
+                      label: Text(widget.workout.category),
+                      backgroundColor:
+                          _getCategoryColor(widget.workout.category),
+                      labelStyle: const TextStyle(color: Colors.white),
+                    ),
+                    // Custom badge (optional indicator)
+                    if (isCustom) ...[
+                      const SizedBox(width: 8),
+                      const Chip(
+                        label: Text('Custom'),
+                        backgroundColor: Colors.purple,
+                        labelStyle:
+                            TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 16),
 

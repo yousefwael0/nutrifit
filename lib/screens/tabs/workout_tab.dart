@@ -6,6 +6,7 @@ import 'package:nutrifit/providers/providers.dart';
 import 'package:nutrifit/screens/workout_timer_screen.dart';
 import 'package:nutrifit/screens/workout_detail_screen.dart';
 import 'package:nutrifit/widgets/cached_meal_image.dart';
+import 'package:nutrifit/screens/create_workout_screen.dart';
 
 /// Workout tab showing weight lifting and cardio workouts
 class WorkoutTab extends StatefulWidget {
@@ -54,68 +55,93 @@ class _WorkoutTabState extends State<WorkoutTab> {
         MockDataRepository.getWorkoutsByCategory(_selectedCategory);
     final categories = MockDataRepository.getAllWorkoutCategories();
 
-    return Column(
-      children: [
-        // Category selector
-        Container(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: categories.map((category) {
-              final isSelected = category == _selectedCategory;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ChoiceChip(
-                    avatar: Icon(
-                      _getCategoryIcon(category),
-                      size: 18,
-                      color: isSelected
-                          ? Colors.white
-                          : _getCategoryColor(category),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Category selector
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: categories.map((category) {
+                  final isSelected = category == _selectedCategory;
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        avatar: Icon(
+                          _getCategoryIcon(category),
+                          size: 18,
+                          color: isSelected
+                              ? Colors.white
+                              : _getCategoryColor(category),
+                        ),
+                        label: Text(
+                          category,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          setState(() => _selectedCategory = category);
+                        },
+                        backgroundColor: Colors.grey[200],
+                        selectedColor: _getCategoryColor(category),
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontSize: 12,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                      ),
                     ),
-                    label: Text(
-                      category,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() => _selectedCategory = category);
-                    },
-                    backgroundColor: Colors.grey[200],
-                    selectedColor: _getCategoryColor(category),
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
+                  );
+                }).toList(),
+              ),
+            ),
 
-        // Workouts list with empty state
-        Expanded(
-          child: workouts.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: workouts.length,
-                  itemBuilder: (context, index) {
-                    // ✅ FIXED: Extract to separate widget
-                    return WorkoutCard(
-                      workout: workouts[index],
-                      categoryIcon: _getCategoryIcon(workouts[index].category),
-                      categoryColor:
-                          _getCategoryColor(workouts[index].category),
-                    );
-                  },
-                ),
+            // Workouts list
+            Expanded(
+              child: workouts.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+                          .onDrag, // ✅ Dismiss on scroll
+                      padding: const EdgeInsets.all(12),
+                      itemCount: workouts.length,
+                      itemBuilder: (context, index) {
+                        return WorkoutCard(
+                          workout: workouts[index],
+                          categoryIcon:
+                              _getCategoryIcon(workouts[index].category),
+                          categoryColor:
+                              _getCategoryColor(workouts[index].category),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
-      ],
+        // ✅ Add create workout FAB
+        floatingActionButton: FloatingActionButton(
+          heroTag: 'workout_add_fab',
+          onPressed: () async {
+            final result = await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const CreateWorkoutScreen(),
+                fullscreenDialog: true,
+              ),
+            );
+
+            // ✅ Refresh tab if workout was created
+            if (result == true && mounted) {
+              setState(() {});
+            }
+          },
+          child: const Icon(Icons.add),
+        ),
+      ),
     );
   }
 
@@ -289,13 +315,22 @@ class WorkoutCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         icon: const Icon(Icons.info, size: 18),
                         label: const Text('Details'),
-                        onPressed: () {
-                          Navigator.of(context).push(
+                        onPressed: () async {
+                          // ✅ Listen for result from detail screen
+                          final result = await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) =>
                                   WorkoutDetailScreen(workout: workout),
                             ),
                           );
+
+                          // ✅ Trigger refresh if changes were made
+                          if (result == true) {
+                            // Find the parent _WorkoutTabState and trigger refresh
+                            (context.findAncestorStateOfType<
+                                    _WorkoutTabState>())
+                                ?.setState(() {});
+                          }
                         },
                       ),
                     ),

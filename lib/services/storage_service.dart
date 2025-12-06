@@ -2,130 +2,235 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutrifit/models/models.dart';
 
-/// Service for handling local storage with shared_preferences
+/// Service for handling local storage with per-user data isolation
 class StorageService {
   static late SharedPreferences _prefs;
-
   static const String _userKey = 'nutrifit_user';
-  static const String _favoriteMealsKey = 'nutrifit_favorite_meals';
-  static const String _favoriteWorkoutsKey = 'nutrifit_favorite_workouts';
-  static const String _recentMealsKey = 'nutrifit_recent_meals';
-  static const String _recentWorkoutsKey = 'nutrifit_recent_workouts';
+  static const String _allUsersKey = 'nutrifit_all_users'; // ✅ Track all users
+
+  /// Current user's email for namespacing
+  static String? _currentUserEmail;
 
   /// Initialize storage service
   static Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  // ==================== User Storage ====================
+  // ==================== User Management ====================
 
-  /// Save user to local storage
-  static Future<bool> saveUser(User user) async {
-    return _prefs.setString(_userKey, jsonEncode(user.toJson()));
+  /// Save user and set as current
+  static Future<void> saveUser(User user) async {
+    _currentUserEmail = user.email;
+    await _prefs.setString(_userKey, jsonEncode(user.toJson()));
+
+    // ✅ Track this user email
+    final allUsers = _prefs.getStringList(_allUsersKey) ?? [];
+    if (!allUsers.contains(user.email)) {
+      allUsers.add(user.email);
+      await _prefs.setStringList(_allUsersKey, allUsers);
+    }
   }
 
   /// Get stored user
   static User? getUser() {
     final userJson = _prefs.getString(_userKey);
     if (userJson == null) return null;
+    final user = User.fromJson(jsonDecode(userJson) as Map<String, dynamic>);
+    _currentUserEmail = user.email;
+    return user;
+  }
+
+  /// Check if email already has an account
+  static bool hasUserWithEmail(String email) {
+    final allUsers = _prefs.getStringList(_allUsersKey) ?? [];
+    return allUsers.contains(email);
+  }
+
+  /// Get user data by email
+  static User? getUserByEmail(String email) {
+    final userJson = _prefs.getString('${_userKey}_$email');
+    if (userJson == null) return null;
     return User.fromJson(jsonDecode(userJson) as Map<String, dynamic>);
   }
 
-  /// Clear user (logout)
-  static Future<bool> clearUser() async {
-    return _prefs.remove(_userKey);
+  /// Save user data with email namespace
+  static Future<void> saveUserData(User user) async {
+    await _prefs.setString(
+        '${_userKey}_${user.email}', jsonEncode(user.toJson()));
   }
 
-  // ==================== Favorites Storage ====================
+  /// Clear user (logout)
+  static Future<void> clearUser() async {
+    await _prefs.remove(_userKey);
+    _currentUserEmail = null;
+  }
 
-  /// Add meal to favorites
-  static Future<bool> addFavoriteMeal(String mealId) async {
-    final favorites = getFavoriteMeals();
+  // ==================== Per-User Data Keys ====================
+
+  /// Get user-specific key
+  static String _getUserKey(String baseKey) {
+    if (_currentUserEmail == null) return baseKey;
+    return '${baseKey}_$_currentUserEmail';
+  }
+
+  // ==================== Favorites Storage (Per-User) ====================
+
+  static Future<void> addFavoriteMeal(String mealId) async {
+    final key = _getUserKey('nutrifit_favorite_meals');
+    final favorites = _prefs.getStringList(key) ?? [];
     if (!favorites.contains(mealId)) {
       favorites.add(mealId);
-      return _prefs.setStringList(_favoriteMealsKey, favorites);
+      await _prefs.setStringList(key, favorites);
     }
-    return true;
   }
 
-  /// Remove meal from favorites
-  static Future<bool> removeFavoriteMeal(String mealId) async {
-    final favorites = getFavoriteMeals();
+  static Future<void> removeFavoriteMeal(String mealId) async {
+    final key = _getUserKey('nutrifit_favorite_meals');
+    final favorites = _prefs.getStringList(key) ?? [];
     favorites.remove(mealId);
-    return _prefs.setStringList(_favoriteMealsKey, favorites);
+    await _prefs.setStringList(key, favorites);
   }
 
-  /// Get favorite meal IDs
   static List<String> getFavoriteMeals() {
-    return _prefs.getStringList(_favoriteMealsKey) ?? [];
+    final key = _getUserKey('nutrifit_favorite_meals');
+    return _prefs.getStringList(key) ?? [];
   }
 
-  /// Check if meal is favorite
-  static bool isMealFavorite(String mealId) {
-    return getFavoriteMeals().contains(mealId);
-  }
-
-  /// Add workout to favorites
-  static Future<bool> addFavoriteWorkout(String workoutId) async {
-    final favorites = getFavoriteWorkouts();
+  static Future<void> addFavoriteWorkout(String workoutId) async {
+    final key = _getUserKey('nutrifit_favorite_workouts');
+    final favorites = _prefs.getStringList(key) ?? [];
     if (!favorites.contains(workoutId)) {
       favorites.add(workoutId);
-      return _prefs.setStringList(_favoriteWorkoutsKey, favorites);
+      await _prefs.setStringList(key, favorites);
     }
-    return true;
   }
 
-  /// Remove workout from favorites
-  static Future<bool> removeFavoriteWorkout(String workoutId) async {
-    final favorites = getFavoriteWorkouts();
+  static Future<void> removeFavoriteWorkout(String workoutId) async {
+    final key = _getUserKey('nutrifit_favorite_workouts');
+    final favorites = _prefs.getStringList(key) ?? [];
     favorites.remove(workoutId);
-    return _prefs.setStringList(_favoriteWorkoutsKey, favorites);
+    await _prefs.setStringList(key, favorites);
   }
 
-  /// Get favorite workout IDs
   static List<String> getFavoriteWorkouts() {
-    return _prefs.getStringList(_favoriteWorkoutsKey) ?? [];
+    final key = _getUserKey('nutrifit_favorite_workouts');
+    return _prefs.getStringList(key) ?? [];
   }
 
-  /// Check if workout is favorite
-  static bool isWorkoutFavorite(String workoutId) {
-    return getFavoriteWorkouts().contains(workoutId);
+  // ==================== Recents Storage (Per-User) ====================
+
+  static Future<void> addRecentMeal(String mealId) async {
+    final key = _getUserKey('nutrifit_recent_meals');
+    final recents = _prefs.getStringList(key) ?? [];
+    recents.remove(mealId);
+    recents.insert(0, mealId);
+    if (recents.length > 10) recents.removeLast();
+    await _prefs.setStringList(key, recents);
   }
 
-  // ==================== Recents Storage ====================
-
-  /// Add meal to recents
-  static Future<bool> addRecentMeal(String mealId) async {
-    final recents = getRecentMeals();
-    recents.remove(mealId); // Remove if already exists
-    recents.insert(0, mealId); // Add to front
-    if (recents.length > 10) recents.removeLast(); // Keep only 10 recent items
-    return _prefs.setStringList(_recentMealsKey, recents);
-  }
-
-  /// Get recent meal IDs
   static List<String> getRecentMeals() {
-    return _prefs.getStringList(_recentMealsKey) ?? [];
+    final key = _getUserKey('nutrifit_recent_meals');
+    return _prefs.getStringList(key) ?? [];
   }
 
-  /// Add workout to recents
-  static Future<bool> addRecentWorkout(String workoutId) async {
-    final recents = getRecentWorkouts();
-    recents.remove(workoutId); // Remove if already exists
-    recents.insert(0, workoutId); // Add to front
-    if (recents.length > 10) recents.removeLast(); // Keep only 10 recent items
-    return _prefs.setStringList(_recentWorkoutsKey, recents);
+  static Future<void> addRecentWorkout(String workoutId) async {
+    final key = _getUserKey('nutrifit_recent_workouts');
+    final recents = _prefs.getStringList(key) ?? [];
+    recents.remove(workoutId);
+    recents.insert(0, workoutId);
+    if (recents.length > 10) recents.removeLast();
+    await _prefs.setStringList(key, recents);
   }
 
-  /// Get recent workout IDs
   static List<String> getRecentWorkouts() {
-    return _prefs.getStringList(_recentWorkoutsKey) ?? [];
+    final key = _getUserKey('nutrifit_recent_workouts');
+    return _prefs.getStringList(key) ?? [];
+  }
+
+  // ==================== Custom Meals/Workouts (Per-User) ====================
+
+  /// Save custom meal
+  static Future<void> saveCustomMeal(Meal meal) async {
+    final key = _getUserKey('nutrifit_custom_meals');
+    final meals = getCustomMeals();
+    meals.add(meal);
+    final jsonList = meals.map((m) => jsonEncode(m.toJson())).toList();
+    await _prefs.setStringList(key, jsonList);
+  }
+
+  /// Get custom meals
+  static List<Meal> getCustomMeals() {
+    final key = _getUserKey('nutrifit_custom_meals');
+    final jsonList = _prefs.getStringList(key) ?? [];
+    return jsonList
+        .map((json) => Meal.fromJson(jsonDecode(json) as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// ✅ Update custom meal
+  static Future<void> updateCustomMeal(Meal updatedMeal) async {
+    final key = _getUserKey('nutrifit_custom_meals');
+    final meals = getCustomMeals();
+    final index = meals.indexWhere((m) => m.id == updatedMeal.id);
+    if (index != -1) {
+      meals[index] = updatedMeal;
+      final jsonList = meals.map((m) => jsonEncode(m.toJson())).toList();
+      await _prefs.setStringList(key, jsonList);
+    }
+  }
+
+  /// ✅ Delete custom meal
+  static Future<void> deleteCustomMeal(String mealId) async {
+    final key = _getUserKey('nutrifit_custom_meals');
+    final meals = getCustomMeals();
+    meals.removeWhere((m) => m.id == mealId);
+    final jsonList = meals.map((m) => jsonEncode(m.toJson())).toList();
+    await _prefs.setStringList(key, jsonList);
+  }
+
+  /// Save custom workout
+  static Future<void> saveCustomWorkout(Workout workout) async {
+    final key = _getUserKey('nutrifit_custom_workouts');
+    final workouts = getCustomWorkouts();
+    workouts.add(workout);
+    final jsonList = workouts.map((w) => jsonEncode(w.toJson())).toList();
+    await _prefs.setStringList(key, jsonList);
+  }
+
+  /// Get custom workouts
+  static List<Workout> getCustomWorkouts() {
+    final key = _getUserKey('nutrifit_custom_workouts');
+    final jsonList = _prefs.getStringList(key) ?? [];
+    return jsonList
+        .map((json) =>
+            Workout.fromJson(jsonDecode(json) as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// ✅ Update custom workout
+  static Future<void> updateCustomWorkout(Workout updatedWorkout) async {
+    final key = _getUserKey('nutrifit_custom_workouts');
+    final workouts = getCustomWorkouts();
+    final index = workouts.indexWhere((w) => w.id == updatedWorkout.id);
+    if (index != -1) {
+      workouts[index] = updatedWorkout;
+      final jsonList = workouts.map((w) => jsonEncode(w.toJson())).toList();
+      await _prefs.setStringList(key, jsonList);
+    }
+  }
+
+  /// ✅ Delete custom workout
+  static Future<void> deleteCustomWorkout(String workoutId) async {
+    final key = _getUserKey('nutrifit_custom_workouts');
+    final workouts = getCustomWorkouts();
+    workouts.removeWhere((w) => w.id == workoutId);
+    final jsonList = workouts.map((w) => jsonEncode(w.toJson())).toList();
+    await _prefs.setStringList(key, jsonList);
   }
 
   // ==================== Clear All ====================
 
-  /// Clear all data (for testing or reset)
-  static Future<bool> clearAll() async {
-    return _prefs.clear();
+  static Future<void> clearAll() async {
+    await _prefs.clear();
   }
 }
