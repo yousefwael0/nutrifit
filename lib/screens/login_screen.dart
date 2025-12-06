@@ -17,7 +17,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late PageController _pageController;
   int _currentPage = 0;
-
   final _emailController = TextEditingController();
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
@@ -48,9 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   /// Handle login/signup
-  void _handleLogin() {
+  /// Handle login/signup
+  void _handleLogin() async {
     final email = _emailController.text.trim();
-
     if (!_isValidEmail(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid email address')),
@@ -61,16 +60,18 @@ class _LoginScreenState extends State<LoginScreen> {
     // ✅ Check if user exists
     if (_currentPage == 0) {
       final existingUser = StorageService.getUserByEmail(email);
-
       if (existingUser != null) {
-        // ✅ User exists - log them in directly
-        context.read<UserProvider>().loginUser(existingUser).then((_) {
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          }
-        });
+        // ✅ Capture navigator before async gap
+        final navigator = Navigator.of(context);
+        final userProvider = context.read<UserProvider>();
+
+        await userProvider.loginUser(existingUser);
+
+        if (mounted) {
+          navigator.pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
         return;
       } else {
         // ✅ New user - go to signup
@@ -105,43 +106,47 @@ class _LoginScreenState extends State<LoginScreen> {
         targetWeight: double.parse(_targetWeightController.text),
       );
 
+      // ✅ Capture navigator before async gap
+      final navigator = Navigator.of(context);
+      final userProvider = context.read<UserProvider>();
+
+      // ✅ Save user data with email namespace
+      await StorageService.saveUserData(user);
+      await userProvider.loginUser(user);
+
       if (mounted) {
-        // ✅ Save user data with email namespace
-        StorageService.saveUserData(user).then((_) {
-          context.read<UserProvider>().loginUser(user).then((_) {
-            if (mounted) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              );
-            }
-          });
-        });
+        navigator.pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          body: PageView(
-            controller: _pageController,
-            onPageChanged: (page) {
-              setState(() => _currentPage = page);
-            },
-            children: [
-              // Login page
-              _buildLoginPage(),
-              // Signup page
-              _buildSignupPage(),
-            ],
-          ),
-        ));
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (page) {
+            setState(() => _currentPage = page);
+          },
+          children: [
+            // Login page
+            _buildLoginPage(),
+            // Signup page
+            _buildSignupPage(),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Build login page
@@ -189,7 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 60),
-
                 // ✅ Email input with white background (custom for login page)
                 TextField(
                   controller: _emailController,
@@ -219,7 +223,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: const TextStyle(color: Colors.black87),
                 ),
                 const SizedBox(height: 24),
-
                 // Login button
                 SizedBox(
                   width: double.infinity,
@@ -254,8 +257,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// Build signup page
   Widget _buildSignupPage() {
+    // ✅ Get theme colors dynamically
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
+
     return Container(
-      color: Colors.white,
+      // ✅ Dynamic background color
+      color: theme.scaffoldBackgroundColor,
       child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -268,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.topLeft,
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    color: const Color(0xFF4CAF50),
+                    color: colorScheme.primary, // ✅ Dynamic color
                     onPressed: () => _pageController.previousPage(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -276,20 +285,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Complete Your Profile',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50),
+                    color: colorScheme.primary, // ✅ Dynamic color
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Help us customize your nutrition plan',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: colorScheme.onSurface
+                        .withValues(alpha: 0.6), // ✅ Dynamic
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -298,52 +308,131 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   enabled: false,
-                  decoration: const InputDecoration(
+                  style: TextStyle(color: colorScheme.onSurface), // ✅ Dynamic
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.grey),
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white24 : Colors.grey.shade300,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ Age - uses global theme
+                // ✅ Age - theme-aware
                 TextField(
                   controller: _ageController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  style: TextStyle(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
                     labelText: 'Age (years)',
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.grey.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ Weight - uses global theme
+                // ✅ Weight - theme-aware
                 TextField(
                   controller: _weightController,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
+                  style: TextStyle(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
                     labelText: 'Current Weight (kg)',
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.grey.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ Height - uses global theme
+                // ✅ Height - theme-aware
                 TextField(
                   controller: _heightController,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
+                  style: TextStyle(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
                     labelText: 'Height (cm)',
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.grey.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 // Sex selector
-                const Text(
+                Text(
                   'Sex',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey,
+                    color: colorScheme.onSurface
+                        .withValues(alpha: 0.6), // ✅ Dynamic
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -367,13 +456,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ Target weight - uses global theme
+                // ✅ Target weight - theme-aware
                 TextField(
                   controller: _targetWeightController,
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
+                  style: TextStyle(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
                     labelText: 'Target Weight (kg)',
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                    filled: true,
+                    fillColor: isDark
+                        ? colorScheme.surfaceContainerHighest
+                        : Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.grey.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -384,9 +496,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: _handleLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
+                      backgroundColor: colorScheme.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text(
                       'Create Account',

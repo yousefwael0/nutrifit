@@ -327,6 +327,10 @@ class WorkoutCard extends StatelessWidget {
                         icon: const Icon(Icons.info, size: 18),
                         label: const Text('Details'),
                         onPressed: () async {
+                          // ✅ Capture parent state before async gap
+                          final parentState = context
+                              .findAncestorStateOfType<_WorkoutTabState>();
+
                           // ✅ Listen for result from detail screen
                           final result = await Navigator.of(context).push(
                             MaterialPageRoute(
@@ -335,12 +339,12 @@ class WorkoutCard extends StatelessWidget {
                             ),
                           );
 
-                          // ✅ Trigger refresh if changes were made
-                          if (result == true) {
-                            // Find the parent _WorkoutTabState and trigger refresh
-                            (context.findAncestorStateOfType<
-                                    _WorkoutTabState>())
-                                ?.setState(() {});
+                          // ✅ Check both result and mounted state
+                          if (result == true &&
+                              parentState != null &&
+                              parentState.mounted) {
+                            // ignore: invalid_use_of_protected_member
+                            parentState.setState(() {});
                           }
                         },
                       ),

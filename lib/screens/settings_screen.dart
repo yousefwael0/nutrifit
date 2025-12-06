@@ -71,22 +71,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   /// Logout user
+  /// Logout user
   Future<void> _logout() async {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
-              await context.read<UserProvider>().logout();
+              // ✅ Capture navigators before async gap
+              final dialogNavigator = Navigator.of(dialogContext);
+              final rootNavigator = Navigator.of(context);
+              final userProvider = context.read<UserProvider>();
+
+              await userProvider.logout();
+
+              // ✅ Use captured navigators
+              dialogNavigator.pop(); // Close dialog
               if (mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
+                rootNavigator.pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
                   (route) => false,
                 );

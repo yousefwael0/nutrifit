@@ -40,30 +40,37 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   }
 
   /// ✅ Delete meal with confirmation (NO restrictions)
+  /// ✅ Delete meal with confirmation (NO restrictions)
   void _deleteMeal() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Meal'),
         content: Text('Are you sure you want to delete "${widget.meal.name}"?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
+              // ✅ Capture navigators and messenger before async gap
+              final dialogNavigator = Navigator.of(dialogContext);
+              final screenNavigator = Navigator.of(context);
+              final messenger = ScaffoldMessenger.of(context);
+
               // Delete from storage and repository
               if (MockDataRepository.isCustomMeal(widget.meal.id)) {
                 await StorageService.deleteCustomMeal(widget.meal.id);
               }
+
               MockDataRepository.deleteMeal(widget.meal.id);
 
+              // ✅ Use captured navigators
+              dialogNavigator.pop(); // Close dialog
               if (mounted) {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(
-                    context, true); // ✅ Return true to trigger refresh
-                ScaffoldMessenger.of(context).showSnackBar(
+                screenNavigator.pop(true); // Return true to trigger refresh
+                messenger.showSnackBar(
                   const SnackBar(content: Text('Meal deleted')),
                 );
               }
