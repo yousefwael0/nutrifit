@@ -23,7 +23,7 @@ class MockDataRepository {
       fats: 5,
       portionSize: 350,
       imageUrl:
-          'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&q=85', // Vibrant oatmeal bowl
+          'https://plus.unsplash.com/premium_photo-1663855531713-836d43edde85?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Vibrant oatmeal bowl
       description:
           'Creamy oatmeal topped with fresh blueberries, strawberries, and a drizzle of golden honey.',
     ),
@@ -267,7 +267,7 @@ class MockDataRepository {
       fats: 14,
       portionSize: 550,
       imageUrl:
-          'https://images.unsplash.com/photo-1515516947383-d15674029dc1?w=800&q=85', // Rich pasta dish
+          'https://images.unsplash.com/photo-1677139599935-67eb22b12bb1?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Rich pasta dish
       description:
           'Classic Italian comfort food with lean turkey meatballs in rich tomato sauce over al dente pasta.',
     ),
@@ -311,7 +311,7 @@ class MockDataRepository {
       fats: 10,
       portionSize: 480,
       imageUrl:
-          'https://images.unsplash.com/photo-1519708227418-8fb0291d1c57?w=800&q=85', // Elegant fish dish
+          'https://images.unsplash.com/photo-1619046214195-2cc6251d9106?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Elegant fish dish
       description:
           'Flaky herb-crusted cod with caramelized sweet potato, tender asparagus, and roasted tomatoes.',
     ),
@@ -356,7 +356,7 @@ class MockDataRepository {
       fats: 9,
       portionSize: 300,
       imageUrl:
-          'https://images.unsplash.com/photo-1488477181946-6428a0291840?w=800&q=85', // Parfait cup
+          'https://images.unsplash.com/photo-1692071106919-01bc0b9b0919?q=80&w=988&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Parfait cup
       description:
           'Layered parfait with thick Greek yogurt, crunchy granola, fresh berries, and honey.',
     ),
@@ -377,7 +377,7 @@ class MockDataRepository {
       fats: 10,
       portionSize: 400,
       imageUrl:
-          'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?w=800&q=85', // Smoothie glass
+          'https://images.unsplash.com/photo-1587501578729-2d1b41255ce4?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Smoothie glass
       description:
           'Creamy protein shake with banana, peanut butter, and vanilla protein - perfect post-workout fuel.',
     ),
@@ -418,7 +418,7 @@ class MockDataRepository {
       fats: 20,
       portionSize: 105,
       imageUrl:
-          'https://images.unsplash.com/photo-1536658113075-bd0a7d05a527?w=800&q=85', // Trail mix
+          'https://plus.unsplash.com/premium_photo-1668677227454-213252229b73?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Trail mix
       description:
           'Energy-packed trail mix with nuts, dark chocolate, dried fruit, and seeds.',
     ),
@@ -438,7 +438,7 @@ class MockDataRepository {
       fats: 12,
       portionSize: 150,
       imageUrl:
-          'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=800&q=85', // Rice cake snack
+          'https://plus.unsplash.com/premium_photo-1699519510499-41b626d8522e?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Rice cake snack
       description:
           'Crunchy rice cakes topped with creamy almond butter, fresh banana, and cinnamon.',
     ),
@@ -492,7 +492,7 @@ class MockDataRepository {
       targetMuscles: ['Chest', 'Triceps', 'Front Shoulders'],
       caloriesBurned: 150,
       imageUrl:
-          'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=85', // Intense gym press
+          'https://plus.unsplash.com/premium_photo-1682094035772-a5ccdb07d9b0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Intense gym press
       description:
           'The king of upper body exercises - builds powerful chest, shoulders, and triceps.',
       durationMinutes: 20,
@@ -532,7 +532,7 @@ class MockDataRepository {
       targetMuscles: ['Quadriceps', 'Glutes', 'Hamstrings', 'Core'],
       caloriesBurned: 160,
       imageUrl:
-          'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=85', // Squat rack
+          'https://images.unsplash.com/photo-1680759170087-3c4659fa9244?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Squat rack
       description:
           'The king of leg exercises - builds massive lower body strength and muscle mass.',
       durationMinutes: 22,
@@ -552,7 +552,7 @@ class MockDataRepository {
       targetMuscles: ['Shoulders', 'Triceps', 'Upper Chest'],
       caloriesBurned: 140,
       imageUrl:
-          'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=85', // Dumbbell press
+          'https://plus.unsplash.com/premium_photo-1663036268502-616949b612a8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Dumbbell press
       description:
           'Build boulder shoulders with this classic pressing movement for maximum shoulder development.',
       durationMinutes: 18,
@@ -572,7 +572,7 @@ class MockDataRepository {
       targetMuscles: ['Upper Back', 'Lats', 'Biceps', 'Rear Delts'],
       caloriesBurned: 145,
       imageUrl:
-          'https://images.unsplash.com/photo-1598971639058-211a74a96c10?w=800&q=85', // Barbell row
+          'https://media.istockphoto.com/id/543189990/photo/barbell-row-back-workout.webp?a=1&b=1&s=612x612&w=0&k=20&c=bw9ReKLkx5O-0AjwyugXyzHM9X1944vWIQOq0VoTsWs=', // Barbell row
       description:
           'Build a thick, powerful back with this compound pulling exercise.',
       durationMinutes: 20,
@@ -592,7 +592,7 @@ class MockDataRepository {
       targetMuscles: ['Quadriceps', 'Glutes', 'Hamstrings'],
       caloriesBurned: 155,
       imageUrl:
-          'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=85', // Gym machine leg press
+          'https://plus.unsplash.com/premium_photo-1679635697818-2cdd42cbc6e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Gym machine leg press
       description:
           'Heavy leg development exercise that safely loads massive weight for quad growth.',
       durationMinutes: 20,
@@ -614,7 +614,7 @@ class MockDataRepository {
       targetMuscles: ['Heart & Lungs', 'Calves', 'Quads', 'Hamstrings'],
       caloriesBurned: 350,
       imageUrl:
-          'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=85', // Scenic trail run
+          'https://plus.unsplash.com/premium_photo-1664301432574-9b4e85c2b2d3?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Scenic trail run
       description:
           'Classic steady-state cardio - improves cardiovascular endurance and burns serious calories.',
       durationMinutes: 35,
@@ -634,7 +634,7 @@ class MockDataRepository {
       targetMuscles: ['Quads', 'Hamstrings', 'Calves', 'Glutes', 'Core'],
       caloriesBurned: 400,
       imageUrl:
-          'https://images.unsplash.com/photo-1534891858418-c743a3551900?w=800&q=85', // Spin class
+          'https://plus.unsplash.com/premium_photo-1661832050577-cea4cb1b9196?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Spin class
       description:
           'Low-impact cardio powerhouse - torch calories while protecting your joints.',
       durationMinutes: 45,
@@ -694,7 +694,7 @@ class MockDataRepository {
       targetMuscles: ['Calves', 'Quads', 'Shoulders', 'Core'],
       caloriesBurned: 310,
       imageUrl:
-          'https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=800&q=85', // Jump rope
+          'https://images.unsplash.com/photo-1686247074183-151c7397017a?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8SnVtcCUyMFJvcGV8ZW58MHx8MHx8fDA%3D', // Jump rope
       description:
           'High-intensity rope jumping that improves coordination, burns fat, and builds calf strength.',
       durationMinutes: 20,
@@ -714,7 +714,7 @@ class MockDataRepository {
       targetMuscles: ['Glutes', 'Quads', 'Hamstrings', 'Calves', 'Core'],
       caloriesBurned: 360,
       imageUrl:
-          'https://images.unsplash.com/photo-1502224562085-639556652f33?w=800&q=85', // Stairs runner
+          'https://plus.unsplash.com/premium_photo-1663063217629-7c702d3ceb78?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Z3ltJTIwc3RhaXIlMjBtYWNoaW5lfGVufDB8fDB8fHww', // Stairs runner
       description:
           'Intense lower-body cardio that sculpts legs and glutes while burning maximum calories.',
       durationMinutes: 30,
