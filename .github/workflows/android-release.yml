@@ -3,7 +3,7 @@ name: Android APK Release
 on:
   push:
     tags:
-      - 'v*'   # runs when you push tags like v1.0.0
+      - 'v*'
 
 jobs:
   build-and-release:
